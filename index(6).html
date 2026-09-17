@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MISSION: RUMAH SEHAT</title>
+<style>
+:root{--p:#166534;--pd:#14532d;--pl:#dcfce7;--gold:#ca8a04;--bg:#f5f7f5;--text:#172018;--muted:#647064;--line:#dfe5df;--red:#dc2626;--shadow:0 8px 25px rgba(0,0,0,.07)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}.loading{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:10px}.spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--p);border-radius:50%;animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at top right,#dcfce7,transparent 35%),radial-gradient(circle at bottom left,#fef3c7,transparent 35%),var(--bg)}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:24px}.login-card{max-width:460px;width:100%;text-align:center;padding:34px}.logo{width:76px;height:76px;background:var(--pl);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:auto auto 15px}.login h1{margin:0;color:var(--pd);font-size:28px}.muted{color:var(--muted)}.field{width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;outline:none}.field:focus{border-color:var(--p);box-shadow:0 0 0 3px #dcfce7}.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:700}.primary{background:var(--p);color:#fff}.secondary{background:#eef2ee;color:var(--text)}.gold{background:#fef3c7;color:#854d0e}.danger{background:#fee2e2;color:#991b1b}.wide{width:100%}
+.alert{padding:13px;border-radius:11px;margin:12px 0}.ok{background:#f0fdf4;border-left:4px solid var(--p)}.warn{background:#fffbeb;border-left:4px solid #f59e0b}.err{background:#fef2f2;border-left:4px solid var(--red);color:#991b1b}
+.header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}.head-in{max-width:1100px;margin:auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{display:flex;align-items:center;gap:10px}.bi{width:42px;height:42px;border-radius:12px;background:var(--pl);display:flex;align-items:center;justify-content:center}.user{text-align:right;font-size:13px}
+.wrap{max-width:1100px;margin:auto;padding:22px 18px 60px}.hero{background:linear-gradient(135deg,#14532d,#166534);color:white;border-radius:22px;padding:28px;margin-bottom:18px}.hero h2{margin:5px 0;font-size:29px}.tag{font-size:12px;background:#ffffff22;padding:5px 10px;border-radius:20px}
+.progress{background:#fff;border-radius:18px;padding:18px;margin-bottom:20px;box-shadow:var(--shadow)}.prog-top{display:flex;justify-content:space-between}.bar{height:11px;background:#e7ece7;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:var(--p);transition:.3s}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.mission{background:#fff;border:1px solid var(--line);border-radius:17px;padding:18px}.num{width:38px;height:38px;border-radius:11px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--pd)}.mission h3{margin:10px 0 4px}.status{font-size:12px;font-weight:700;margin-top:10px}.done{color:var(--p)}.pending{color:var(--gold)}
+.modal{position:fixed;inset:0;background:#0008;z-index:100;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-box{background:#fff;width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:20px;padding:23px}.modal-head{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:18px}.close{border:0;border-radius:50%;width:36px;height:36px;font-size:20px}.choice{width:100%;text-align:left;background:#fff;border:1px solid var(--line);padding:12px;border-radius:10px;margin:6px 0}.choice:hover,.choice.selected{background:var(--pl);border-color:var(--p)}.challenge{background:#f8faf8;border:1px solid var(--line);border-radius:14px;padding:16px;margin:15px 0}.result{display:none;padding:11px;border-radius:9px;margin-top:8px}
+.form-group{margin:14px 0}.form-group label{display:block;font-weight:700;margin-bottom:6px}.form-group input,.form-group textarea,.form-group select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px}.form-group textarea{min-height:95px}.question{border:1px solid var(--line);border-radius:14px;padding:15px;margin:12px 0}.option{display:block;border:1px solid var(--line);border-radius:9px;padding:9px;margin-top:7px}.teacher-table{width:100%;border-collapse:collapse;font-size:13px}.teacher-table th,.teacher-table td{padding:9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.teacher-table th{background:#f3f6f3;position:sticky;top:0}.scroll{overflow:auto}.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:14px;border-radius:13px;background:#f8faf8}.stat strong{font-size:24px;display:block}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.user{display:none}.hero{padding:22px}.hero h2{font-size:25px}.login-card{padding:25px 18px}}
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading"><div class="spin"></div><strong>Menyiapkan Mission...</strong></div>
+
+<section id="loginPage" class="login">
+  <div class="login-card card">
+    <div class="logo">🏠</div>
+    <h1>MISSION: RUMAH SEHAT</h1>
+    <p class="muted">Saat Asap Datang, Kita Siap</p>
+    <div class="alert ok" style="text-align:left"><strong>🎯 Misi hari ini</strong><br>Belajar menjaga kesehatan diri dan lingkungan ketika terjadi kabut asap akibat karhutla.</div>
+
+    <input id="nisInput" class="field" inputmode="numeric" placeholder="Masukkan NIS" autocomplete="off">
+    <div id="loginError" class="alert err hidden"></div>
+    <div id="studentPreview" class="alert ok hidden" style="text-align:left"></div>
+
+    <button id="checkBtn" class="btn secondary wide" onclick="checkNIS()">🔎 PERIKSA NIS</button>
+    <button id="startBtn" class="btn primary wide hidden" onclick="startStudent()">🚀 MULAI MISI</button>
+
+    <div style="margin-top:16px">
+      <button class="btn secondary" onclick="openTeacherLogin()">👨‍🏫 Dashboard Guru</button>
+    </div>
+  </div>
+</section>
+
+<div id="studentApp" class="hidden">
+<header class="header"><div class="head-in">
+  <div class="brand"><div class="bi">🏠</div><div><strong>MISSION: RUMAH SEHAT</strong><div class="muted" style="font-size:12px">DPL Kesehatan</div></div></div>
+  <div class="user"><strong id="studentName">-</strong><span id="studentClass">-</span></div>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="tag">🌿 DIMENSI PROFIL LULUSAN — KESEHATAN</span>
+    <h2>Saat Asap Datang, Kita Siap.</h2>
+    <p>Rumahmu menjadi tempat belajar. Ikuti misi, buat keputusan aman, lakukan aksi nyata, dan buktikan.</p>
+  </section>
+
+  <section class="progress">
+    <div class="prog-top"><strong>Progress Misi</strong><strong id="progressText">0 / 7</strong></div>
+    <div class="bar"><div id="progressFill" class="fill"></div></div>
+  </section>
+
+  <h2>🗺️ Peta Misi</h2>
+  <div id="missionGrid" class="grid"></div>
+
+  <section class="progress" style="margin-top:20px">
+    <h2>🏆 Final Mission</h2>
+    <p>Lakukan satu tindakan sederhana di rumah untuk menjaga kesehatan selama kondisi udara kurang baik.</p>
+    <button class="btn primary" onclick="openAction()">📸 KERJAKAN AKSI</button>
+  </section>
+  <div class="footer">MISSION: RUMAH SEHAT • Projek Kokurikuler • DPL Kesehatan</div>
+</main>
+</div>
+
+<div id="teacherApp" class="hidden">
+<header class="header"><div class="head-in">
+  <div class="brand"><div class="bi">📊</div><div><strong>MONITORING GURU</strong><div class="muted" style="font-size:12px">MISSION: RUMAH SEHAT</div></div></div>
+  <button class="btn secondary" onclick="location.reload()">Keluar</button>
+</div></header>
+<main class="wrap">
+  <section class="hero"><span class="tag">DASHBOARD GURU</span><h2>Monitoring Pengerjaan Siswa</h2><p>Lihat siapa yang belum mulai, sedang berproses, dan sudah selesai.</p></section>
+  <div id="stats" class="stat-grid"></div>
+  <div class="card" style="margin-top:18px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <h2 style="margin:0">Daftar Siswa</h2>
+      <div><select id="classFilter" class="field" style="width:auto" onchange="renderTeacher()"><option value="">Semua Kelas</option></select> <button class="btn secondary" onclick="loadDashboard()">🔄 Refresh</button></div>
+    </div>
+    <div class="scroll" style="margin-top:15px"><table class="teacher-table"><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th><th>M7</th><th>Quiz</th><th>Aksi</th><th>Status</th></tr></thead><tbody id="teacherBody"></tbody></table></div>
+  </div>
+</main>
+</div>
+
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><div><h2 id="modalTitle" style="margin:0">Mission</h2><small id="modalSub" class="muted"></small></div><button class="close" onclick="closeModal()">×</button></div><div id="modalContent"></div></div></div>
+<div id="toast" class="alert" style="position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:500;display:none;box-shadow:var(--shadow)"></div>
+
+<script>
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbzoYMbaVQmMbyNYVuVH7POifjcSSuIpacn9LqJOqvfa1y6BZHYgVzjHjRKsriaAkNGl/exec";
+
+let student=null;
+let progress={misi1:false,misi2:false,misi3:false,misi4:false,misi5:false,misi6:false,misi7:false};
+let teacherRows=[];
+
+const missions=[
+  ["01","APA YANG TERJADI?","Kenali apa yang terjadi ketika karhutla menghasilkan asap."],
+  ["02","KENALI ASAP","Kenali partikel asap dan mengapa kualitas udara penting."],
+  ["03","APA DAMPAKNYA?","Identifikasi dampak kabut asap terhadap tubuh."],
+  ["04","LINDUNGI DIRI","Pilih tindakan yang tepat ketika kualitas udara memburuk."],
+  ["05","RUMAH SEHAT DETECTIVE","Periksa kondisi rumah dan temukan satu hal yang dapat diperbaiki."],
+  ["06","KEPUTUSAN CEPAT","Hadapi situasi dan pilih keputusan yang aman."],
+  ["07","FINAL QUIZ","Uji pemahaman melalui 15 pertanyaan."]
+];
+
+window.addEventListener("load",()=>setTimeout(()=>document.getElementById("loading").style.display="none",400));
+
+async function api(action,data={}){
+  const payload={...data,action};
+  const r=await fetch(APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+  const t=await r.text();
+  let j; try{j=JSON.parse(t)}catch(e){throw new Error("Respons server tidak valid: "+t.slice(0,150))}
+  if(j.success===false) throw new Error(j.message||"Permintaan gagal");
+  return j;
+}
+
+function toast(msg){
+  const el=document.getElementById("toast");el.textContent=msg;el.style.display="block";
+  setTimeout(()=>el.style.display="none",3000);
+}
+
+async function checkNIS(){
+  const nis=document.getElementById("nisInput").value.trim();
+  const err=document.getElementById("loginError"), prev=document.getElementById("studentPreview");
+  err.classList.add("hidden");prev.classList.add("hidden");document.getElementById("startBtn").classList.add("hidden");
+  if(!nis){err.textContent="Masukkan NIS.";err.classList.remove("hidden");return}
+  try{
+    const r=await api("validateStudent",{id:nis});
+    student=r.student;
+    prev.innerHTML=`<strong>✓ NIS ditemukan</strong><br><span style="font-size:20px">${esc(student.name)}</span><br>Kelas ${esc(student.className)}`;
+    prev.classList.remove("hidden");
+    document.getElementById("startBtn").classList.remove("hidden");
+    document.getElementById("checkBtn").classList.add("hidden");
+  }catch(e){err.textContent=e.message;err.classList.remove("hidden")}
+}
+
+async function startStudent(){
+  if(!student)return;
+  localStorage.setItem("rumahSehatStudent",JSON.stringify(student));
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("studentApp").classList.remove("hidden");
+  document.getElementById("studentName").textContent=student.name;
+  document.getElementById("studentClass").textContent="Kelas "+student.className;
+  buildMissions();
+  await loadProgress();
+}
+
+async function loadProgress(){
+  try{
+    const r=await api("getProgress",{id:student.id});
+    progress=r.progress||progress;
+  }catch(e){toast("Progress server belum terbaca: "+e.message)}
+  updateProgress();
+}
+
+function buildMissions(){
+  document.getElementById("missionGrid").innerHTML=missions.map((m,i)=>`
+    <article class="mission">
+      <div class="num">${m[0]}</div>
+      <h3>${m[1]}</h3><p class="muted">${m[2]}</p>
+      <button class="btn secondary" onclick="openMission(${i+1})">Mulai / Lanjut</button>
+      <div id="status${i+1}" class="status pending">○ Belum selesai</div>
+    </article>`).join("");
+  updateProgress();
+}
+
+function updateProgress(){
+  let n=0;for(let i=1;i<=7;i++){if(progress["misi"+i]){n++;const s=document.getElementById("status"+i);if(s){s.textContent="✓ Selesai";s.className="status done"}}}
+  document.getElementById("progressText").textContent=n+" / 7";
+  document.getElementById("progressFill").style.width=(n/7*100)+"%";
+}
+
+function openMission(n){
+  if(n===1) modal("01 — APA YANG TERJADI?","Memahami situasi",`
+    <h3>🌫️ Coba Bayangkan...</h3><p>Pagi ini udara di sekitar rumah tampak berkabut dan berbau asap. Jarak pandang menjadi lebih pendek.</p>
+    <div class="alert warn"><strong>Pertanyaan:</strong> Apa yang kemungkinan terjadi pada kualitas udara?</div>
+    <div class="challenge"><button class="choice" onclick="answer(this,true)">A. Udara kemungkinan mengandung lebih banyak partikel/asap</button><button class="choice" onclick="answer(this,false)">B. Udara pasti lebih bersih</button><button class="choice" onclick="answer(this,false)">C. Tidak ada hubungannya dengan kesehatan</button><div class="result"></div></div>
+    ${finishBtn(1)}`);
+  if(n===2) modal("02 — KENALI ASAP","Mengenal kualitas udara",`
+    <h3>🔬 Mengapa Asap Perlu Diwaspadai?</h3><p>Asap karhutla dapat membawa berbagai partikel dan zat yang mengganggu kualitas udara.</p>
+    <div class="alert ok"><strong>Ingat!</strong><br>Semakin buruk kualitas udara, semakin penting mengurangi paparan dan memilih aktivitas aman.</div>
+    <div class="challenge"><strong>QUICK CHECK</strong><p>Jika udara di luar sangat berasap, tindakan yang lebih aman adalah...</p><button class="choice" onclick="answer(this,true)">Mengurangi aktivitas di luar ruangan</button><button class="choice" onclick="answer(this,false)">Berolahraga di luar</button><button class="choice" onclick="answer(this,false)">Bermain di luar lebih lama</button><div class="result"></div></div>
+    ${finishBtn(2)}`);
+  if(n===3) modal("03 — APA DAMPAKNYA?","Mengenali dampak terhadap tubuh",`
+    <h3>🫁 Kenali Sinyal Tubuh</h3><p>Paparan udara buruk dapat membuat tubuh memberikan berbagai tanda seperti batuk, iritasi tenggorokan, mata perih, atau gangguan pernapasan.</p>
+    <div class="challenge"><p>Jika seseorang mengalami gangguan pernapasan saat kualitas udara buruk, tindakan yang tepat adalah...</p><button class="choice" onclick="answer(this,true)">Mengurangi paparan dan meminta bantuan orang dewasa/tenaga kesehatan bila diperlukan</button><button class="choice" onclick="answer(this,false)">Tetap beraktivitas seperti biasa</button><button class="choice" onclick="answer(this,false)">Berlari ke luar rumah</button><div class="result"></div></div>
+    ${finishBtn(3)}`);
+  if(n===4) modal("04 — LINDUNGI DIRI","Memilih tindakan aman",`
+    <h3>🛡️ Safety First</h3><div class="alert warn"><ul><li>Kurangi aktivitas di luar saat udara tidak sehat.</li><li>Kurangi masuknya asap ke dalam rumah jika memungkinkan.</li><li>Perhatikan kelompok rentan.</li><li>Hindari sumber asap tambahan.</li><li>Perhatikan kondisi tubuh.</li></ul></div>
+    <div class="challenge"><p>Di luar sangat berasap. Teman mengajak bermain.</p><button class="choice" onclick="answer(this,true)">Menolak dengan baik dan memilih aktivitas di dalam</button><button class="choice" onclick="answer(this,false)">Tetap keluar karena hanya sebentar</button><button class="choice" onclick="answer(this,false)">Bermain lebih lama</button><div class="result"></div></div>
+    ${finishBtn(4)}`);
+  if(n===5) modal("05 — RUMAH SEHAT DETECTIVE","Observasi lingkungan rumah",`
+    <h3>🕵️ Jadilah Detektif Kesehatan!</h3><p>Perhatikan rumahmu dari dalam.</p><div class="challenge"><strong>🔎 Cek 5 Hal</strong><ol><li>Apakah ada asap yang masuk?</li><li>Apakah pintu/jendela perlu disesuaikan untuk mengurangi asap?</li><li>Apakah rumah cukup bersih?</li><li>Apakah tersedia air minum?</li><li>Apakah ada sumber asap lain yang dapat dihindari?</li></ol></div>
+    <div class="alert ok"><strong>Tantangan:</strong> Temukan 1 hal yang dapat kamu perbaiki untuk membuat lingkungan rumah lebih sehat.</div>${finishBtn(5)}`);
+  if(n===6) modal("06 — KEPUTUSAN CEPAT","Game pengambilan keputusan",`
+    <h3>⚡ QUICK DECISION</h3>
+    <div class="challenge"><strong>Situasi 1</strong><p>Udara sangat berasap. Apa pilihanmu?</p><button class="choice" onclick="answer(this,true)">Tetap di dalam dan mengurangi paparan</button><button class="choice" onclick="answer(this,false)">Keluar untuk olahraga</button><div class="result"></div></div>
+    <div class="challenge"><strong>Situasi 2</strong><p>Anggota keluarga mengalami keluhan kesehatan yang mengkhawatirkan.</p><button class="choice" onclick="answer(this,true)">Memberi tahu orang dewasa dan mencari bantuan yang sesuai</button><button class="choice" onclick="answer(this,false)">Membiarkannya</button><div class="result"></div></div>${finishBtn(6)}`);
+  if(n===7) quiz();
+}
+
+function finishBtn(n){return `<button class="btn primary wide" onclick="finishMission(${n})">✓ Selesaikan Misi ${n}</button>`}
+function answer(el,correct){const box=el.parentElement;box.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");const r=box.querySelector(".result");r.style.display="block";r.style.background=correct?"#dcfce7":"#fee2e2";r.style.color=correct?"#166534":"#991b1b";r.textContent=correct?"✓ Tepat!":"Coba pikirkan lagi tindakan yang paling aman."}
+async function finishMission(n){try{const r=await api("saveProgress",{id:student.id,sessionId:getSession(),mission:"misi"+n});progress=r.progress||progress;updateProgress();closeModal();toast("✓ Misi "+n+" selesai!")}catch(e){toast(e.message)}}
+function modal(title,sub,content){document.getElementById("modalTitle").textContent=title;document.getElementById("modalSub").textContent=sub;document.getElementById("modalContent").innerHTML=content;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+
+const questions=[
+["Apa salah satu sumber utama kabut asap akibat karhutla?",["Pembakaran hutan/lahan","Air hujan","Embun pagi","Angin laut"]],
+["Ketika udara sangat berasap, aktivitas yang sebaiknya dikurangi adalah...",["Aktivitas di luar ruangan","Membaca di dalam rumah","Belajar di dalam rumah","Istirahat"]],
+["Mengapa asap perlu diwaspadai?",["Dapat menurunkan kualitas udara","Selalu membuat udara lebih segar","Tidak memiliki partikel","Membuat tubuh lebih bugar"]],
+["Salah satu tanda tubuh terganggu akibat udara buruk adalah...",["Batuk","Tubuh semakin kuat","Penglihatan semakin tajam","Nafsu belajar meningkat"]],
+["Jika mata terasa perih akibat asap, tindakan yang tepat adalah...",["Mengurangi paparan asap","Menggosok mata terus-menerus","Keluar mencari udara berasap","Mengabaikannya"]],
+["Ketika udara luar buruk, rumah dapat menjadi tempat aktivitas yang lebih aman jika...",["Paparan asap dapat dikurangi","Semua jendela selalu terbuka","Ada banyak sumber asap","Tidak ada ventilasi sama sekali"]],
+["Salah satu sumber asap tambahan yang sebaiknya dihindari adalah...",["Asap rokok","Air putih","Makanan sehat","Udara bersih"]],
+["Apa yang sebaiknya dilakukan jika muncul keluhan kesehatan yang mengkhawatirkan?",["Memberi tahu orang dewasa dan mencari bantuan yang sesuai","Menyembunyikannya","Tetap beraktivitas berat","Keluar rumah tanpa tujuan"]],
+["Apa tujuan utama menjaga rumah tetap sehat saat kabut asap?",["Mengurangi paparan dan menjaga kesehatan","Membuat rumah lebih gelap","Membuat aktivitas luar lebih banyak","Menghasilkan asap tambahan"]],
+["Jika teman mengajak bermain di luar ketika udara sangat berasap, pilihan yang lebih aman adalah...",["Menolak dengan baik dan memilih aktivitas di dalam","Ikut bermain","Bermain lebih lama","Berlari di luar"]],
+["Mengapa kita perlu memperhatikan kelompok rentan?",["Mereka dapat lebih berisiko mengalami dampak kesehatan","Mereka selalu kebal terhadap asap","Mereka tidak membutuhkan perlindungan","Karena mereka harus berada di luar"]],
+["Apa yang dapat dilakukan di rumah sebagai aksi sederhana?",["Mengurangi masuknya asap dan menjaga kebersihan","Membakar sampah","Merokok di dalam rumah","Membuka semua sumber asap"]],
+["Saat kondisi udara buruk, keputusan sebaiknya didasarkan pada...",["Informasi kualitas udara dan kondisi tubuh","Ajakan teman saja","Keinginan bermain","Perkiraan tanpa informasi"]],
+["Jika tubuh menunjukkan keluhan saat terpapar asap, kita perlu...",["Mengurangi paparan dan memperhatikan kondisi kesehatan","Menambah aktivitas","Mencari sumber asap","Mengabaikan semua gejala"]],
+["Apa tujuan utama Mission: Rumah Sehat?",["Membiasakan mengambil keputusan yang mendukung kesehatan","Membuat siswa keluar rumah","Menghindari semua aktivitas belajar","Mencari sumber kebakaran"]]
+];
+
+function quiz(){
+ let h='<form id="quizForm">';
+ questions.forEach((x,i)=>{h+=`<div class="question"><small class="muted">SOAL ${i+1} DARI 15</small><p><strong>${x[0]}</strong></p>`;x[1].forEach((a,j)=>h+=`<label class="option"><input type="radio" name="q${i}" value="${j}" required> ${a}</label>`);h+='</div>'});
+ h+='<button class="btn primary wide" type="submit">🏆 KIRIM JAWABAN</button></form><div id="quizResult"></div>';
+ modal("07 — FINAL QUIZ","15 pertanyaan • Skor dihitung server",h);
+ document.getElementById("quizForm").addEventListener("submit",submitQuiz);
+}
+
+async function submitQuiz(e){
+ e.preventDefault();
+ const fd=new FormData(e.target), answers=[];
+ for(let i=0;i<15;i++)answers.push(Number(fd.get("q"+i)));
+ try{
+   const r=await api("saveQuiz",{id:student.id,sessionId:getSession(),answers});
+   document.getElementById("quizResult").innerHTML=`<div class="${r.persen>=70?'alert ok':'alert warn'}"><h3>${r.persen>=70?'🎉 Hebat!':'💪 Tetap Semangat!'}</h3><p>Skor: <strong>${r.score}/15 (${r.persen}%)</strong></p><p>Status: <strong>${r.status}</strong></p></div>`;
+   if(r.status==="LULUS"){progress.misi7=true;updateProgress()}
+ }catch(e){document.getElementById("quizResult").innerHTML=`<div class="alert err">${e.message}</div>`}
+}
+
+function openAction(){
+ modal("🏠 FINAL MISSION","Aksi Rumah Sehat",`
+ <h3>🌿 Satu Aksi Nyata</h3><p>Lakukan satu tindakan sederhana di rumah yang membantu menjaga kesehatan selama kondisi udara kurang baik.</p>
+ <div class="alert ok"><strong>Contoh:</strong> menjaga kebersihan rumah, mengurangi masuknya asap, memastikan air minum, menghindari sumber asap, atau mengingatkan keluarga.</div>
+ <form id="actionForm">
+ <div class="form-group"><label>Jenis Aksi</label><select id="actionType" required><option value="">Pilih aksi</option><option>Menjaga kebersihan rumah</option><option>Mengurangi masuknya asap</option><option>Menjaga ketersediaan air minum</option><option>Menghindari sumber asap</option><option>Mengingatkan anggota keluarga</option><option>Aksi lainnya</option></select></div>
+ <div class="form-group"><label>Ceritakan aksi</label><textarea id="actionDescription" required></textarea></div>
+ <div class="form-group"><label>Foto bukti</label><input id="actionPhoto" type="file" accept="image/jpeg,image/png,image/webp" required><small class="muted">Maksimal 3 MB. Tidak harus memperlihatkan wajah.</small></div>
+ <div class="form-group"><label>Refleksi 1 — Apa yang kamu lakukan?</label><textarea id="reflection1" required></textarea></div>
+ <div class="form-group"><label>Refleksi 2 — Mengapa aksi itu penting?</label><textarea id="reflection2" required></textarea></div>
+ <div class="form-group"><label>Refleksi 3 — Apa yang akan kamu biasakan?</label><textarea id="reflection3" required></textarea></div>
+ <button class="btn primary wide" type="submit">📤 KIRIM AKSI</button></form>`);
+ document.getElementById("actionForm").addEventListener("submit",submitAction);
+}
+
+function fileBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file)})}
+async function submitAction(e){
+ e.preventDefault();const file=document.getElementById("actionPhoto").files[0];if(!file)return;
+ if(file.size>3*1024*1024){toast("Foto maksimal 3 MB.");return}
+ try{
+   toast("Mengunggah foto...");
+   const up=await api("uploadPhoto",{id:student.id,sessionId:getSession(),fileName:file.name,mimeType:file.type,base64:await fileBase64(file)});
+   await api("saveAction",{id:student.id,sessionId:getSession(),actionType:document.getElementById("actionType").value,actionDescription:document.getElementById("actionDescription").value,fileId:up.fileId,fileUrl:up.fileUrl,reflection1:document.getElementById("reflection1").value,reflection2:document.getElementById("reflection2").value,reflection3:document.getElementById("reflection3").value});
+   progress.misi5=true;updateProgress();closeModal();toast("🎉 Aksi berhasil dikirim!");
+ }catch(err){toast(err.message)}
+}
+
+function getSession(){let s=localStorage.getItem("rumahSehatSession");if(!s){s="RS-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);localStorage.setItem("rumahSehatSession",s)}return s}
+
+function openTeacherLogin(){
+ const p=prompt("Masukkan password guru:");
+ if(p===null)return;
+ api("getDashboard",{password:p}).then(r=>{teacherRows=r.rows;document.getElementById("loginPage").style.display="none";document.getElementById("teacherApp").classList.remove("hidden");buildFilter();renderTeacher(r.summary)}).catch(e=>alert(e.message));
+}
+async function loadDashboard(){
+ const p=prompt("Masukkan password guru untuk refresh:");
+ if(p===null)return;
+ try{const r=await api("getDashboard",{password:p});teacherRows=r.rows;buildFilter();renderTeacher(r.summary)}catch(e){alert(e.message)}
+}
+function buildFilter(){
+ const sel=document.getElementById("classFilter"), old=sel.value;
+ const classes=[...new Set(teacherRows.map(r=>r.kelas))].sort();
+ sel.innerHTML='<option value="">Semua Kelas</option>'+classes.map(c=>`<option>${esc(c)}</option>`).join("");sel.value=old;
+}
+function renderTeacher(summary){
+ const f=document.getElementById("classFilter").value;
+ const rows=f?teacherRows.filter(r=>r.kelas===f):teacherRows;
+ const s=summary||{total:teacherRows.length,belum:0,proses:0,selesai:0};
+ document.getElementById("stats").innerHTML=`<div class="stat"><small>Total</small><strong>${s.total}</strong></div><div class="stat"><small>Belum Mulai</small><strong>${s.belum}</strong></div><div class="stat"><small>Berproses</small><strong>${s.proses}</strong></div><div class="stat"><small>Selesai</small><strong>${s.selesai}</strong></div>`;
+ document.getElementById("teacherBody").innerHTML=rows.map(r=>`<tr><td>${esc(r.nis)}</td><td>${esc(r.nama)}</td><td>${esc(r.kelas)}</td>${[1,2,3,4,5,6,7].map(n=>`<td>${r["m"+n]==="SELESAI"?"✓":"○"}</td>`).join("")}<td>${r.persen!==""?esc(String(r.persen))+"%":"-"}</td><td>${r.aksi==="YA"?"✓":"○"}</td><td>${esc(r.status)}</td></tr>`).join("");
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+document.getElementById("nisInput").addEventListener("keydown",e=>{if(e.key==="Enter")checkNIS()});
+</script>
+</body>
+</html>
