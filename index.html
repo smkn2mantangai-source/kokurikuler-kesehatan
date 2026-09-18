@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MISSION: RUMAH SEHAT V2 - DPL Kesehatan</title>
+  <title>MISSION: RUMAH SEHAT - DPL Kesehatan</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -14,13 +14,13 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
 
   <!-- LOADING SPINNER -->
-  <div id="loading" class="fixed inset-0 bg-white/95 z-50 flex flex-col items-center justify-center gap-3">
+  <div id="loading" class="fixed inset-0 bg-white/95 z-[100] flex flex-col items-center justify-center gap-3 transition-opacity duration-500">
     <div class="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
     <p class="text-sm font-semibold text-slate-600" id="loadingText">Menyiapkan Aplikasi...</p>
   </div>
 
   <!-- TOAST NOTIFIKASI -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl hidden transition-all duration-300"></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] bg-slate-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl hidden transition-all duration-300"></div>
 
   <!-- ==================== HALAMAN LOGIN SISWA ==================== -->
   <section id="loginPage" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100">
@@ -46,12 +46,12 @@
           </select>
         </div>
 
-        <button id="btnStart" disabled class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200">
+        <button id="btnStart" disabled onclick="window.startStudentSession()" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200">
           🚀 Masuk & Mulai Misi
         </button>
 
         <div class="pt-4 border-t border-slate-100 text-center">
-          <button onclick="openTeacherLoginModal()" class="text-xs font-semibold text-slate-500 hover:text-emerald-700 transition-colors">
+          <button onclick="window.openTeacherLoginModal()" class="text-xs font-semibold text-slate-500 hover:text-emerald-700 transition-colors">
             👨‍🏫 Akses Dashboard Guru
           </button>
         </div>
@@ -61,7 +61,7 @@
 
   <!-- ==================== DASHBOARD SISWA ==================== -->
   <div id="studentApp" class="hidden min-h-screen pb-16">
-    <header class="bg-white/80 backdrop-blur border-b border-slate-200 sticky top-0 z-30 px-4 py-3">
+    <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-30 px-4 py-3 shadow-sm">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="text-2xl">🌿</span>
@@ -71,11 +71,11 @@
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <div class="text-right">
-            <div id="userNameDisplay" class="text-xs font-bold text-slate-900">-</div>
-            <div id="userClassDisplay" class="text-[11px] text-slate-500">-</div>
+          <div class="text-right hidden sm:block">
+            <div id="userNameDisplay" class="text-xs font-bold text-slate-900 uppercase">-</div>
+            <div id="userClassDisplay" class="text-[11px] text-slate-500 font-semibold">-</div>
           </div>
-          <button onclick="confirmLogout()" title="Keluar" class="p-2 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition">
+          <button onclick="window.confirmLogout()" title="Keluar / Ganti Akun" class="p-2 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
           </button>
         </div>
@@ -84,10 +84,11 @@
 
     <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
       <!-- HERO BANNER -->
-      <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-6 md:p-8 text-white shadow-lg">
-        <span class="inline-block bg-white/20 text-emerald-100 text-xs font-bold px-3 py-1 rounded-full mb-3">DIMENSI PROFIL LULUSAN: KESEHATAN</span>
-        <h2 class="text-2xl md:text-3xl font-extrabold mb-2">Saat Asap Datang, Kita Siap.</h2>
-        <p class="text-sm text-emerald-100/90 leading-relaxed max-w-2xl">
+      <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mr-4 -mt-4 opacity-10 text-9xl">🏠</div>
+        <span class="inline-block bg-white/20 backdrop-blur text-emerald-50 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full mb-3">DIMENSI PROFIL LULUSAN: KESEHATAN</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold mb-2 relative z-10">Saat Asap Datang, Kita Siap.</h2>
+        <p class="text-sm text-emerald-50/90 leading-relaxed max-w-2xl relative z-10">
           Selesaikan seluruh modul edukasi untuk memahami bahaya partikel asap, lindungi saluran pernapasanmu, dan buktikan aksimu secara nyata di rumah!
         </p>
       </div>
@@ -98,8 +99,8 @@
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Progress Penuntasan</span>
           <span id="progressText" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0 / 7 Misi</span>
         </div>
-        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-          <div id="progressBar" class="h-full bg-emerald-500 transition-all duration-500 rounded-full" style="width: 0%"></div>
+        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+          <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-500 rounded-full" style="width: 0%"></div>
         </div>
       </div>
 
@@ -114,13 +115,14 @@
       </div>
 
       <!-- FINAL MISSION CARD -->
-      <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-6 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-widest bg-black/20 px-2.5 py-1 rounded-md">Misi Nyata</span>
-          <h4 class="text-xl font-bold mt-2">Tugas Aksi Rumah Sehat</h4>
-          <p class="text-sm text-amber-100 mt-1">Lakukan 1 tindakan nyata menjaga sirkulasi/kebersihan rumah dan unggah buktinya.</p>
+      <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-6 md:p-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div class="absolute -left-6 -bottom-6 opacity-20 text-8xl">📸</div>
+        <div class="relative z-10">
+          <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest bg-black/20 backdrop-blur px-3 py-1 rounded-md">Misi Nyata</span>
+          <h4 class="text-xl md:text-2xl font-bold mt-2">Tugas Aksi Rumah Sehat</h4>
+          <p class="text-sm text-amber-50 mt-2 max-w-md">Lakukan 1 tindakan nyata menjaga sirkulasi/kebersihan rumah dan unggah buktinya.</p>
         </div>
-        <button onclick="openAction()" class="bg-white hover:bg-amber-50 text-amber-900 font-bold px-5 py-3 rounded-xl shadow-lg transition shrink-0">
+        <button onclick="window.openAction()" class="w-full md:w-auto bg-white hover:bg-amber-50 text-amber-900 font-bold px-6 py-3.5 rounded-xl shadow-xl transition shrink-0 relative z-10">
           📸 Kerjakan Aksi
         </button>
       </div>
@@ -128,52 +130,56 @@
   </div>
 
   <!-- ==================== DASHBOARD GURU ==================== -->
-  <div id="teacherApp" class="hidden min-h-screen pb-16">
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3">
-      <div class="max-w-6xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">📊</span>
-          <h2 class="text-sm font-bold text-slate-900">Dashboard Monitoring Guru</h2>
+  <div id="teacherApp" class="hidden min-h-screen pb-16 bg-slate-100">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 shadow-sm">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-slate-800 text-white rounded-xl flex items-center justify-center text-xl">📊</div>
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 leading-tight">Dashboard Monitoring Guru</h2>
+            <div class="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Terkoneksi Real-Time
+            </div>
+          </div>
         </div>
-        <button onclick="location.reload()" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">Keluar</button>
+        <button onclick="location.reload()" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition">Keluar</button>
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 mt-6 space-y-6">
       <!-- STATS -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Total Siswa</small><div id="statTotal" class="text-2xl font-black text-slate-900 mt-1">0</div></div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Belum Mulai</small><div id="statBelum" class="text-2xl font-black text-rose-600 mt-1">0</div></div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Berproses</small><div id="statProses" class="text-2xl font-black text-amber-600 mt-1">0</div></div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Selesai</small><div id="statSelesai" class="text-2xl font-black text-emerald-600 mt-1">0</div></div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><small class="text-slate-500 font-bold text-xs uppercase tracking-wider">Total Siswa</small><div id="statTotal" class="text-3xl font-black text-slate-900 mt-1">0</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><small class="text-slate-500 font-bold text-xs uppercase tracking-wider">Belum Mulai</small><div id="statBelum" class="text-3xl font-black text-rose-600 mt-1">0</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><small class="text-slate-500 font-bold text-xs uppercase tracking-wider">Berproses</small><div id="statProses" class="text-3xl font-black text-amber-500 mt-1">0</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><small class="text-slate-500 font-bold text-xs uppercase tracking-wider">Selesai</small><div id="statSelesai" class="text-3xl font-black text-emerald-600 mt-1">0</div></div>
       </div>
 
       <!-- FILTER & TABEL -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-        <div class="p-4 border-b border-slate-200 flex flex-wrap gap-3 items-center justify-between">
+        <div class="p-4 border-b border-slate-100 bg-slate-50 flex flex-wrap gap-3 items-center justify-between">
           <h3 class="font-bold text-slate-900">Pantauan Kelas Real-Time</h3>
-          <select id="teacherClassFilter" onchange="renderTeacherTable()" class="text-sm border border-slate-200 rounded-xl px-3 py-1.5 focus:outline-none">
+          <select id="teacherClassFilter" onchange="window.renderTeacherTable()" class="text-sm font-semibold border border-slate-300 rounded-xl px-4 py-2 focus:outline-none focus:border-emerald-500">
             <option value="">Semua Kelas</option>
           </select>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left">
-            <thead class="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase">
+            <thead class="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase tracking-wide">
               <tr>
-                <th class="p-3">NIS</th>
-                <th class="p-3">Nama</th>
-                <th class="p-3">Kelas</th>
-                <th class="p-3 text-center">M1</th>
-                <th class="p-3 text-center">M2</th>
-                <th class="p-3 text-center">M3</th>
-                <th class="p-3 text-center">M4</th>
-                <th class="p-3 text-center">M5</th>
-                <th class="p-3 text-center">M6</th>
-                <th class="p-3 text-center">M7</th>
-                <th class="p-3 text-center">Kuis</th>
-                <th class="p-3 text-center">Aksi</th>
-                <th class="p-3">Status</th>
+                <th class="p-4">NIS</th>
+                <th class="p-4">Nama Siswa</th>
+                <th class="p-4">Kelas</th>
+                <th class="p-2 text-center" title="Misi 1">M1</th>
+                <th class="p-2 text-center" title="Misi 2">M2</th>
+                <th class="p-2 text-center" title="Misi 3">M3</th>
+                <th class="p-2 text-center" title="Misi 4">M4</th>
+                <th class="p-2 text-center" title="Misi 5">M5</th>
+                <th class="p-2 text-center" title="Misi 6">M6</th>
+                <th class="p-2 text-center" title="Kuis Final (Misi 7)">Kuis</th>
+                <th class="p-4 text-center">Foto Aksi</th>
+                <th class="p-4">Status</th>
               </tr>
             </thead>
             <tbody id="teacherTableBody" class="divide-y divide-slate-100"></tbody>
@@ -184,24 +190,32 @@
   </div>
 
   <!-- ==================== MODAL GLOBAL (POPUP) ==================== -->
-  <div id="modalBackdrop" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto my-auto">
-      <button onclick="closeModal()" class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 text-lg font-bold">×</button>
-      <div id="modalHeader" class="mb-4">
-        <h3 id="modalTitle" class="text-xl font-bold text-slate-900">Judul Modal</h3>
-        <p id="modalSub" class="text-xs text-slate-500 font-medium"></p>
+  <div id="modalBackdrop" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+    <div class="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col my-auto">
+      <button onclick="window.closeModal()" class="absolute top-4 right-4 md:top-6 md:right-6 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 text-lg font-bold transition-colors">×</button>
+      <div id="modalHeader" class="mb-5 border-b border-slate-100 pb-4 pr-6">
+        <h3 id="modalTitle" class="text-xl md:text-2xl font-extrabold text-slate-900 leading-tight">Judul Modal</h3>
+        <p id="modalSub" class="text-xs font-bold text-emerald-600 uppercase tracking-widest mt-1"></p>
       </div>
-      <div id="modalContent" class="text-sm text-slate-700 space-y-4"></div>
+      <div id="modalContent" class="text-sm text-slate-700 space-y-5 overflow-y-auto pr-2 custom-scrollbar pb-2"></div>
     </div>
   </div>
 
-  <!-- FIREBASE MODULAR SCRIPTS -->
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+
+  <!-- FIREBASE MODULAR SCRIPTS & LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // Konfigurasi Database Firebase Anda
     const firebaseConfig = {
       apiKey: "AIzaSyAHUBrmU090Uqs-JeRf44f0KnOut2clGnE",
       authDomain: "rumah-sehat-2257b.firebaseapp.com",
@@ -215,6 +229,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Data Master Siswa Default (Bisa diedit/ditambah)
     const defaultRoster = [
       {nis:'1001',nama:'AMIRA',kelas:'XA'},{nis:'1002',nama:'ARI SULTAN',kelas:'XA'},
       {nis:'1003',nama:'DIPA',kelas:'XA'},{nis:'1004',nama:'FITRI',kelas:'XA'},
@@ -252,6 +267,7 @@
       {nis:'1065',nama:'Risky saputra',kelas:'XI ATP'},{nis:'1066',nama:'SAMUEL',kelas:'XI ATP'}
     ];
 
+    // Variabel Global
     let currentStudent = null;
     let studentsData = [];
     let progressData = {};
@@ -293,12 +309,12 @@
         if (snap.empty) {
           document.getElementById("loadingText").textContent = "Sinkronisasi data awal siswa...";
           for (const s of defaultRoster) {
-            await setDoc(doc(db, "students", s.nis), { ...s, aktif: "YA" });
+            await setDoc(doc(db, "students", String(s.nis)), { ...s, aktif: "YA" });
           }
           const refreshSnap = await getDocs(collection(db, "students"));
-          studentsData = refreshSnap.docs.map(d => d.data());
+          studentsData = refreshSnap.docs.map(d => normalizeStudentData(d));
         } else {
-          studentsData = snap.docs.map(d => d.data());
+          studentsData = snap.docs.map(d => normalizeStudentData(d));
         }
 
         populateClassSelect();
@@ -309,13 +325,24 @@
       }
     }
 
+    // Penormalan data agar tahan terhadap huruf kapital (NIS vs nis) dari data lama
+    function normalizeStudentData(docSnap) {
+      const data = docSnap.data();
+      return {
+        nis: String(data.nis || data.NIS || docSnap.id),
+        nama: data.nama || data.NAMA || "Tanpa Nama",
+        kelas: data.kelas || data.KELAS || "Tanpa Kelas"
+      };
+    }
+
     function showLoadingError(msg) {
       document.getElementById("loading").innerHTML = `
-        <div class="text-center p-6 max-w-sm">
+        <div class="text-center p-6 max-w-sm bg-white rounded-3xl shadow-2xl">
           <div class="text-4xl mb-3">⚠️</div>
-          <h3 class="font-bold text-red-600 text-lg">Gagal Terhubung ke Database</h3>
-          <p class="text-xs text-slate-600 mt-2">${msg}</p>
-          <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl">Coba Lagi</button>
+          <h3 class="font-bold text-red-600 text-lg">Koneksi Database Gagal</h3>
+          <p class="text-xs text-slate-600 mt-2">Pastikan pengaturan <b>Rules</b> di Firebase sudah diubah menjadi <code>allow read, write: if true;</code>.</p>
+          <p class="text-[10px] text-slate-400 mt-3 border-t pt-2">${msg}</p>
+          <button onclick="location.reload()" class="mt-4 w-full py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition">Coba Lagi</button>
         </div>
       `;
     }
@@ -347,43 +374,46 @@
       document.getElementById("nameSelect").onchange = (e) => {
         document.getElementById("btnStart").disabled = !e.target.value;
       };
-
-      document.getElementById("btnStart").onclick = () => {
-        const nis = document.getElementById("nameSelect").value;
-        const student = studentsData.find(s => s.nis === nis);
-        if (student) startStudentSession(student);
-      };
     }
 
-    async function startStudentSession(student) {
-      currentStudent = student;
-      document.getElementById("userNameDisplay").textContent = student.nama;
-      document.getElementById("userClassDisplay").textContent = "Kelas " + student.kelas;
+    window.startStudentSession = function() {
+      const nis = document.getElementById("nameSelect").value;
+      if (!nis || nis === "undefined") return; // Pengaman jika kosong
 
-      document.getElementById("loginPage").classList.add("hidden");
-      document.getElementById("studentApp").classList.remove("hidden");
+      const student = studentsData.find(s => String(s.nis) === String(nis));
+      
+      if (student && student.nis) {
+        currentStudent = student;
+        document.getElementById("userNameDisplay").textContent = student.nama;
+        document.getElementById("userClassDisplay").textContent = "Kelas " + student.kelas;
 
-      renderMissions();
-      listenProgress(student.nis);
-    }
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("studentApp").classList.remove("hidden");
+
+        renderMissions();
+        listenProgress(String(student.nis));
+      } else {
+        alert("Terjadi kesalahan. Silakan muat ulang halaman.");
+      }
+    };
 
     function renderMissions() {
       const list = document.getElementById("missionsList");
       list.innerHTML = missionMeta.map(m => `
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-emerald-200 transition-colors">
           <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-xs">
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 font-black flex items-center justify-center text-sm shadow-inner">
                 ${m.id < 10 ? '0' + m.id : m.id}
               </span>
-              <span id="statusBadge-${m.id}" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+              <span id="statusBadge-${m.id}" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 uppercase tracking-wide">
                 ○ Belum Selesai
               </span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm">${m.title}</h4>
-            <p class="text-xs text-slate-500 mt-1 leading-relaxed">${m.desc}</p>
+            <h4 class="font-bold text-slate-900 text-sm md:text-base">${m.title}</h4>
+            <p class="text-[11px] md:text-xs text-slate-500 mt-1.5 leading-relaxed">${m.desc}</p>
           </div>
-          <button onclick="openMission(${m.id})" class="mt-4 w-full py-2.5 px-3 bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-bold text-xs rounded-xl transition">
+          <button onclick="window.openMission(${m.id})" class="mt-5 w-full py-2.5 px-3 bg-slate-50 hover:bg-emerald-600 hover:text-white border border-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">
             Buka Materi & Misi
           </button>
         </div>
@@ -391,8 +421,10 @@
     }
 
     function listenProgress(nis) {
+      if (!nis || nis === "undefined") return; // Safety check mutlak untuk Firebase
       if (unsubscribeProgress) unsubscribeProgress();
-      const ref = doc(db, "progress", nis);
+      const ref = doc(db, "progress", String(nis));
+      
       unsubscribeProgress = onSnapshot(ref, (docSnap) => {
         if (docSnap.exists()) {
           progressData = docSnap.data();
@@ -402,7 +434,8 @@
             misi5:false, misi6:false, misi7:false,
             nama: currentStudent.nama, kelas: currentStudent.kelas, nis: currentStudent.nis
           };
-          setDoc(ref, progressData);
+          // Buat dokumen progress pertama kali
+          setDoc(ref, progressData).catch(err => console.error("Error pembuatan progress:", err));
         }
         updateProgressUI();
       });
@@ -413,12 +446,13 @@
       for (let i = 1; i <= 7; i++) {
         const done = progressData['misi' + i] === true;
         if (done) count++;
+        
         const badge = document.getElementById(`statusBadge-${i}`);
         if (badge) {
           badge.textContent = done ? "✓ Selesai" : "○ Belum Selesai";
           badge.className = done 
-            ? "text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800" 
-            : "text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700";
+            ? "text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wide" 
+            : "text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 uppercase tracking-wide";
         }
       }
 
@@ -434,8 +468,8 @@
           [`misi${missionNumber}`]: true,
           lastUpdated: new Date().toISOString()
         });
-        showToast(`🎉 Misi ${missionNumber} Berhasil Diselesaikan!`);
-        closeModal();
+        showToast(`🎉 Hebat! Misi ${missionNumber} Berhasil Diselesaikan!`);
+        window.closeModal();
       } catch (err) {
         showToast("Gagal menyimpan progress: " + err.message);
       }
@@ -447,7 +481,7 @@
           "01 — Apa Yang Terjadi?",
           "Memahami Fenomena Kabut Asap Karhutla",
           `
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
                 <h4 class="font-bold text-emerald-900 text-sm">🌫️ Mengapa Udara Menjadi Berkabut & Berbau?</h4>
                 <p class="text-xs text-emerald-800 mt-1 leading-relaxed">
@@ -457,24 +491,24 @@
 
               <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                 <h4 class="font-bold text-slate-800 text-sm">💡 Apa yang Terjadi pada Lingkungan?</h4>
-                <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside mt-2">
+                <ul class="text-xs text-slate-600 space-y-2 list-disc list-inside mt-2">
                   <li><strong>Jarak Pandang Menyusut:</strong> Menghalangi cahaya matahari dan membahayakan mobilitas di jalan raya.</li>
                   <li><strong>Kualitas Udara Menurun:</strong> Kadar oksigen bersih menipis, digantikan partikel pencemar.</li>
                   <li><strong>Infiltrasi Rumah:</strong> Tanpa perlindungan, partikel halus ini dengan mudah menyusup melalui lubang ventilasi rumah kita.</li>
                 </ul>
               </div>
 
-              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
-                <p class="text-xs font-bold text-amber-900 mt-1">Saat udara di luar berbau sangit dan berkabut asap tebal, tindakan apa yang sebaiknya dihindari?</p>
+              <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest bg-amber-200/50 px-2 py-1 rounded">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-2">Saat udara di luar berbau sangit dan berkabut asap tebal, tindakan apa yang sebaiknya dihindari?</p>
                 <div class="space-y-2 mt-3">
-                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Membuka jendela kamar agar udara luar masuk bebas</button>
-                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Menutup ventilasi berlebih dan beraktivitas di dalam rumah</button>
+                  <button onclick="window.checkAnswer(this, false)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:bg-amber-100/50 transition">A. Membuka jendela kamar agar udara luar masuk bebas</button>
+                  <button onclick="window.checkAnswer(this, true)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition">B. Menutup ventilasi berlebih dan beraktivitas di dalam rumah</button>
                 </div>
-                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+                <div class="resultFeedback mt-3 hidden"></div>
               </div>
 
-              <button onclick="markMissionComplete(1)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <button onclick="window.markMissionComplete(1)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
                 ✓ Saya Paham & Selesaikan Misi 01
               </button>
             </div>
@@ -485,7 +519,7 @@
           "02 — Kenali Partikel Asap",
           "Ancaman Halus Tak Kasat Mata: PM2.5 & ISPU",
           `
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200">
                 <h4 class="font-bold text-blue-900 text-sm">🔬 Apa itu PM2.5?</h4>
                 <p class="text-xs text-blue-800 mt-1 leading-relaxed">
@@ -495,25 +529,25 @@
 
               <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                 <h4 class="font-bold text-slate-800 text-sm">📊 Mengenal Kategori ISPU</h4>
-                <div class="grid grid-cols-2 gap-2 mt-2 text-[11px]">
-                  <div class="p-2 bg-green-100 text-green-900 rounded-lg"><strong>0 - 50 (Baik):</strong> Udara sangat sehat.</div>
-                  <div class="p-2 bg-blue-100 text-blue-900 rounded-lg"><strong>51 - 100 (Sedang):</strong> Masih dapat ditoleransi.</div>
-                  <div class="p-2 bg-yellow-100 text-yellow-900 rounded-lg"><strong>101 - 200 (Tidak Sehat):</strong> Bersifat merugikan manusia & tanaman.</div>
-                  <div class="p-2 bg-red-100 text-red-900 rounded-lg"><strong>201 - 300 (Sangat Tidak Sehat):</strong> Tingkatkan proteksi ketat!</div>
+                <div class="grid grid-cols-2 gap-2 mt-2 text-[10px] md:text-[11px]">
+                  <div class="p-3 bg-green-100 text-green-900 rounded-xl"><strong>0 - 50 (Baik):</strong> Udara sangat sehat.</div>
+                  <div class="p-3 bg-blue-100 text-blue-900 rounded-xl"><strong>51 - 100 (Sedang):</strong> Masih dapat ditoleransi.</div>
+                  <div class="p-3 bg-yellow-100 text-yellow-900 rounded-xl"><strong>101 - 200 (Tidak Sehat):</strong> Bersifat merugikan manusia & tanaman.</div>
+                  <div class="p-3 bg-red-100 text-red-900 rounded-xl"><strong>201 - 300 (Sangat Tidak Sehat):</strong> Tingkatkan proteksi ketat!</div>
                 </div>
               </div>
 
-              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
-                <p class="text-xs font-bold text-amber-900 mt-1">Mengapa masker kain biasa tidak cukup melindungi saat kabut asap pekat?</p>
+              <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest bg-amber-200/50 px-2 py-1 rounded">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-2">Mengapa masker kain biasa tidak cukup melindungi saat kabut asap pekat?</p>
                 <div class="space-y-2 mt-3">
-                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Karena pori-pori kain jauh lebih besar daripada ukuran mikropartikel PM2.5</button>
-                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Karena masker kain tidak memiliki warna menarik</button>
+                  <button onclick="window.checkAnswer(this, true)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition">A. Karena pori-pori kain jauh lebih besar daripada ukuran mikropartikel PM2.5</button>
+                  <button onclick="window.checkAnswer(this, false)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:bg-amber-100/50 transition">B. Karena masker kain tidak memiliki warna menarik</button>
                 </div>
-                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+                <div class="resultFeedback mt-3 hidden"></div>
               </div>
 
-              <button onclick="markMissionComplete(2)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <button onclick="window.markMissionComplete(2)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
                 ✓ Saya Paham & Selesaikan Misi 02
               </button>
             </div>
@@ -524,7 +558,7 @@
           "03 — Apa Dampaknya ke Tubuh?",
           "Mengenali Sinyal Alarm Tubuh Terhadap Racun Asap",
           `
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div class="p-4 bg-rose-50 rounded-2xl border border-rose-200">
                 <h4 class="font-bold text-rose-900 text-sm">🫁 Reaksi Sistem Pernapasan & Organ Tubuh</h4>
                 <p class="text-xs text-rose-800 mt-1 leading-relaxed">
@@ -532,28 +566,28 @@
                 </p>
               </div>
 
-              <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                   <strong class="text-slate-800">Gejala Umum Ringan:</strong>
-                  <p class="text-slate-600 mt-1">Mata pedih berair, hidung tersumbat, bersin, tenggorokan gatal dan batuk kering.</p>
+                  <p class="text-slate-600 mt-1.5 leading-relaxed">Mata pedih berair, hidung tersumbat, bersin, tenggorokan gatal dan batuk kering.</p>
                 </div>
-                <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
-                  <strong class="text-rose-800">Tanda Bahaya Darurat:</strong>
-                  <p class="text-rose-600 mt-1">Sesak napas hebat, bunyi mengi pada dada, dada terasa tertekan, atau lemas ekstrem.</p>
+                <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl">
+                  <strong class="text-rose-900">Tanda Bahaya Darurat:</strong>
+                  <p class="text-rose-700 mt-1.5 leading-relaxed">Sesak napas hebat, bunyi mengi pada dada, dada terasa tertekan, atau lemas ekstrem.</p>
                 </div>
               </div>
 
-              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
-                <p class="text-xs font-bold text-amber-900 mt-1">Langkah pertama yang paling bijak jika mata terasa perih akibat kabut asap adalah...</p>
+              <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest bg-amber-200/50 px-2 py-1 rounded">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-2">Langkah pertama yang paling bijak jika mata terasa perih akibat kabut asap adalah...</p>
                 <div class="space-y-2 mt-3">
-                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Membilas dengan air bersih/tetes mata steril dan masuk ke ruang tertutup</button>
-                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Mengucek mata sekuat tenaga dengan tangan kotor</button>
+                  <button onclick="window.checkAnswer(this, true)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition">A. Membilas dengan air bersih/tetes mata steril dan masuk ke ruang tertutup</button>
+                  <button onclick="window.checkAnswer(this, false)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:bg-amber-100/50 transition">B. Mengucek mata sekuat tenaga dengan tangan kotor</button>
                 </div>
-                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+                <div class="resultFeedback mt-3 hidden"></div>
               </div>
 
-              <button onclick="markMissionComplete(3)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <button onclick="window.markMissionComplete(3)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
                 ✓ Saya Paham & Selesaikan Misi 03
               </button>
             </div>
@@ -564,10 +598,10 @@
           "04 — Lindungi Diri & Keluarga",
           "Protokol Perlindungan Diri & Masker yang Tepat",
           `
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div class="p-4 bg-teal-50 rounded-2xl border border-teal-200">
                 <h4 class="font-bold text-teal-900 text-sm">🛡️ Protokol 5 Langkah Kesiapsiagaan</h4>
-                <ol class="text-xs text-teal-800 space-y-1.5 list-decimal list-inside mt-2 leading-relaxed">
+                <ol class="text-xs text-teal-800 space-y-2 list-decimal list-inside mt-2 leading-relaxed">
                   <li><strong>Gunakan Masker Standar:</strong> Gunakan respirator N95, KN95, atau KF94 yang pas (fit) di wajah saat terpaksa ke luar.</li>
                   <li><strong>Hindari Polusi Dalam Ruangan:</strong> Jangan merokok, menyalakan obat nyamuk bakar, atau membakar sampah di sekitar rumah.</li>
                   <li><strong>Jaga Hidrasi:</strong> Perbanyak minum air putih hangat untuk membersihkan lendir pada saluran napas.</li>
@@ -576,17 +610,17 @@
                 </ol>
               </div>
 
-              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
-                <p class="text-xs font-bold text-amber-900 mt-1">Jika terpaksa harus keluar rumah untuk keperluan mendesak, masker apa yang paling disarankan?</p>
+              <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest bg-amber-200/50 px-2 py-1 rounded">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-2">Jika terpaksa harus keluar rumah untuk keperluan mendesak, masker apa yang paling disarankan?</p>
                 <div class="space-y-2 mt-3">
-                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Masker N95 / KN95 / KF94 dengan kerapatan tinggi</button>
-                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Masker scuba tipis yang longgar</button>
+                  <button onclick="window.checkAnswer(this, true)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition">A. Masker N95 / KN95 / KF94 dengan kerapatan tinggi</button>
+                  <button onclick="window.checkAnswer(this, false)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:bg-amber-100/50 transition">B. Masker scuba tipis yang longgar</button>
                 </div>
-                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+                <div class="resultFeedback mt-3 hidden"></div>
               </div>
 
-              <button onclick="markMissionComplete(4)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <button onclick="window.markMissionComplete(4)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
                 ✓ Saya Paham & Selesaikan Misi 04
               </button>
             </div>
@@ -597,7 +631,7 @@
           "05 — Rumah Sehat Detective",
           "Audit Mandiri Kondisi Fisik Rumah Tinggal",
           `
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-200">
                 <h4 class="font-bold text-indigo-900 text-sm">🕵️ Jadilah Detektif Kebersihan Udara di Rumah!</h4>
                 <p class="text-xs text-indigo-800 mt-1 leading-relaxed">
@@ -605,8 +639,8 @@
                 </p>
               </div>
 
-              <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs space-y-2">
-                <h5 class="font-bold text-slate-800">5 Titik Pemeriksaan Wajib:</h5>
+              <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs space-y-3">
+                <h5 class="font-bold text-slate-800 text-sm">5 Titik Pemeriksaan Wajib:</h5>
                 <p>1. <strong>Celah Bawah Pintu:</strong> Apakah ada celah besar tempat asap menyusup masuk?</p>
                 <p>2. <strong>Kaca & Jendela:</strong> Apakah sudah terkunci rapat saat kualitas udara memburuk?</p>
                 <p>3. <strong>Kebersihan Lantai:</strong> Bersihkan debu jelaga dengan kain pel lembap, bukan disapu kering.</p>
@@ -614,17 +648,17 @@
                 <p>5. <strong>Ruang Bersih (Clean Room):</strong> Tentukan satu kamar dengan ventilasi paling minim untuk tempat istirahat keluarga.</p>
               </div>
 
-              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
-                <p class="text-xs font-bold text-amber-900 mt-1">Mengapa membersihkan debu abu karhutla di lantai lebih baik dipel daripada disapu biasa?</p>
+              <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest bg-amber-200/50 px-2 py-1 rounded">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-2">Mengapa membersihkan debu abu karhutla di lantai lebih baik dipel daripada disapu biasa?</p>
                 <div class="space-y-2 mt-3">
-                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Agar partikel abu terikat air dan tidak melayang kembali terhirup hidung</button>
-                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Agar lantai menjadi licin untuk bermain seluncuran</button>
+                  <button onclick="window.checkAnswer(this, true)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition">A. Agar partikel abu terikat air dan tidak melayang kembali terhirup hidung</button>
+                  <button onclick="window.checkAnswer(this, false)" class="w-full text-left p-3.5 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:bg-amber-100/50 transition">B. Agar lantai menjadi licin untuk bermain seluncuran</button>
                 </div>
-                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+                <div class="resultFeedback mt-3 hidden"></div>
               </div>
 
-              <button onclick="markMissionComplete(5)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <button onclick="window.markMissionComplete(5)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
                 ✓ Saya Paham & Selesaikan Misi 05
               </button>
             </div>
@@ -635,7 +669,7 @@
           "06 — Keputusan Cepat & Tepat",
           "Simulasi Pengambilan Keputusan Nyata",
           `
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
                 <h4 class="font-bold text-amber-900 text-sm">⚡ Uji Respon Tanggap Darurat</h4>
                 <p class="text-xs text-amber-800 mt-1 leading-relaxed">
@@ -643,20 +677,20 @@
                 </p>
               </div>
 
-              <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
-                <div class="text-xs font-bold text-slate-800">Skenario: Temanmu mengajak berolahraga di luar karena bosan di rumah, sementara langit tampak kuning kecokelatan dan berbau menyengat.</div>
+              <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                <div class="text-sm font-bold text-slate-800 leading-snug">Skenario: Temanmu mengajak berolahraga di luar karena bosan di rumah, sementara langit tampak kuning kecokelatan dan berbau menyengat.</div>
                 <div class="space-y-2">
-                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
-                    <strong>Pilihan Aman:</strong> Menolak ajakan secara ramah, menjelaskan bahaya racun asap, dan mengajak aktivitas lain di dalam rumah.
+                  <button onclick="window.checkAnswer(this, true)" class="w-full text-left p-4 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition">
+                    <strong>Pilihan A:</strong> Menolak ajakan secara ramah, menjelaskan bahaya racun asap, dan mengajak aktivitas lain di dalam rumah.
                   </button>
-                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
-                    <strong>Pilihan Bahaya:</strong> Tetap ikut bermain karena menganggap fisik masih muda dan sehat.
+                  <button onclick="window.checkAnswer(this, false)" class="w-full text-left p-4 text-xs font-medium bg-white border border-slate-200 rounded-xl hover:border-rose-400 hover:bg-rose-50 transition">
+                    <strong>Pilihan B:</strong> Tetap ikut bermain karena menganggap fisik masih muda dan sehat.
                   </button>
                 </div>
-                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+                <div class="resultFeedback mt-3 hidden"></div>
               </div>
 
-              <button onclick="markMissionComplete(6)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <button onclick="window.markMissionComplete(6)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
                 ✓ Saya Paham & Selesaikan Misi 06
               </button>
             </div>
@@ -672,10 +706,10 @@
       const feedback = parent.querySelector(".resultFeedback");
       feedback.classList.remove("hidden");
       if (isCorrect) {
-        feedback.className = "resultFeedback mt-2 p-2.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+        feedback.className = "resultFeedback mt-3 p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
         feedback.textContent = "✓ Tepat sekali! Analisis keputusanmu sangat benar.";
       } else {
-        feedback.className = "resultFeedback mt-2 p-2.5 rounded-lg text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
+        feedback.className = "resultFeedback mt-3 p-3 rounded-xl text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
         feedback.textContent = "✗ Kurang tepat. Pikirkan kembali opsi yang meminimalkan bahaya bagi tubuh.";
       }
     };
@@ -684,14 +718,14 @@
       let qHtml = `<form id="quizForm" class="space-y-6">`;
       quizQuestions.forEach((item, idx) => {
         qHtml += `
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Soal ${idx + 1} dari 15</span>
-            <p class="text-xs font-bold text-slate-900">${item.q}</p>
-            <div class="space-y-1.5 pt-1">
+          <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-200/50 px-2 py-1 rounded">Soal ${idx + 1} dari 15</span>
+            <p class="text-sm font-bold text-slate-900 leading-snug">${item.q}</p>
+            <div class="space-y-2 pt-1">
               ${item.opt.map((optText, oIdx) => `
-                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer hover:bg-slate-50">
-                  <input type="radio" name="q_${idx}" value="${oIdx}" required class="text-emerald-600 focus:ring-emerald-500">
-                  <span>${optText}</span>
+                <label class="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition">
+                  <input type="radio" name="q_${idx}" value="${oIdx}" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                  <span class="font-medium">${optText}</span>
                 </label>
               `).join('')}
             </div>
@@ -699,11 +733,11 @@
         `;
       });
       qHtml += `
-        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+        <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-emerald-200">
           Kirim & Simpan Jawaban Kuis
         </button>
       </form>
-      <div id="quizResultArea" class="mt-4 hidden"></div>`;
+      <div id="quizResultArea" class="mt-5 hidden"></div>`;
 
       setModal("07 — Final Quiz", "Uji Pemahaman Komprehensif (15 Soal)", qHtml);
 
@@ -722,10 +756,10 @@
         resultArea.classList.remove("hidden");
 
         resultArea.innerHTML = `
-          <div class="p-4 rounded-2xl border ${pass ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'}">
-            <h4 class="font-bold text-sm">${pass ? '🎉 Selamat, Kamu Lulus!' : '💪 Tetap Semangat, Ulangi Lagi!'}</h4>
-            <p class="text-xs mt-1">Skor Kamu: <strong>${score} / 15 (${percent}%)</strong></p>
-            <p class="text-xs mt-0.5 font-medium">${pass ? 'Pemahamanmu tentang kesiapsiagaan kabut asap sangat luar biasa!' : 'Syarat lulus kuis adalah minimal nilai 70%. Silakan pelajari kembali materi sebelumnya.'}</p>
+          <div class="p-5 rounded-2xl border ${pass ? 'bg-emerald-50 border-emerald-300 text-emerald-900 shadow-sm' : 'bg-amber-50 border-amber-300 text-amber-900 shadow-sm'}">
+            <h4 class="font-extrabold text-lg">${pass ? '🎉 Selamat, Kamu Lulus!' : '💪 Tetap Semangat, Ulangi Lagi!'}</h4>
+            <p class="text-sm mt-2">Skor Kamu: <strong class="text-base">${score} / 15 (${percent}%)</strong></p>
+            <p class="text-xs mt-1.5 font-medium leading-relaxed">${pass ? 'Pemahamanmu tentang kesiapsiagaan kabut asap sangat luar biasa!' : 'Syarat lulus kuis adalah minimal nilai 70%. Silakan pelajari kembali materi sebelumnya.'}</p>
           </div>
         `;
 
@@ -752,10 +786,10 @@
         "Tugas Aksi Nyata Rumah Sehat",
         "Dokumentasi & Refleksi Tindakan Nyata di Rumah",
         `
-          <form id="actionForm" class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">1. Jenis Tindakan yang Dilakukan</label>
-              <select id="actType" required class="w-full text-xs border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+          <form id="actionForm" class="space-y-5">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-2">1. Jenis Tindakan yang Dilakukan</label>
+              <select id="actType" required class="w-full text-sm font-medium border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
                 <option value="">-- Pilih Jenis Aksi --</option>
                 <option value="Menyumbat Celah Pintu/Ventilasi">Menyumbat celah pintu/jendela dengan kain lembap</option>
                 <option value="Mengepel Basah Abu Jelaga">Mengepel lantai secara basah untuk mengikat debu</option>
@@ -765,34 +799,34 @@
               </select>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">2. Ceritakan Apa yang Kamu Lakukan</label>
-              <textarea id="actDesc" required rows="3" placeholder="Ceritakan bagaimana kamu melakukan tindakan di atas..." class="w-full text-xs border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></textarea>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-2">2. Ceritakan Apa yang Kamu Lakukan</label>
+              <textarea id="actDesc" required rows="3" placeholder="Ceritakan bagaimana kamu melakukan tindakan di atas..." class="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></textarea>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">3. Foto Bukti Tindakan (Maks. 3 MB)</label>
-              <input type="file" id="actPhoto" accept="image/*" required class="w-full text-xs border border-slate-200 rounded-xl p-2.5 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-              <small class="text-[11px] text-slate-500 block mt-1">Foto kegiatan atau barang bukti tindakan. Tidak wajib memperlihatkan wajah.</small>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-2">3. Foto Bukti Tindakan</label>
+              <input type="file" id="actPhoto" accept="image/*" required class="w-full text-sm bg-white border border-slate-300 rounded-xl p-2.5 file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer">
+              <small class="text-[11px] font-medium text-slate-500 block mt-2 leading-tight">Foto akan dikompresi otomatis. Tidak wajib memperlihatkan wajah.</small>
             </div>
 
-            <div class="space-y-3 pt-2">
-              <label class="block text-xs font-bold text-slate-900 border-b border-slate-100 pb-1 uppercase">Pertanyaan Refleksi Siswa</label>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4">
+              <label class="block text-xs font-bold text-slate-900 border-b border-slate-200 pb-2 uppercase tracking-wide">4. Pertanyaan Refleksi Siswa</label>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Refleksi 1: Mengapa tindakan yang kamu pilih itu penting bagi kesehatan?</label>
-                <textarea id="ref1" required rows="2" class="w-full text-xs border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Refleksi 1: Mengapa tindakan yang kamu pilih itu penting bagi kesehatan?</label>
+                <textarea id="ref1" required rows="2" class="w-full text-sm border border-slate-300 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Refleksi 2: Apa kendala yang kamu temui dan bagaimana solusinya?</label>
-                <textarea id="ref2" required rows="2" class="w-full text-xs border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Refleksi 2: Apa kendala yang kamu temui dan bagaimana solusinya?</label>
+                <textarea id="ref2" required rows="2" class="w-full text-sm border border-slate-300 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Refleksi 3: Kebiasaan sehat apa yang akan terus kamu jaga setelah ini?</label>
-                <textarea id="ref3" required rows="2" class="w-full text-xs border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Refleksi 3: Kebiasaan sehat apa yang akan terus kamu jaga setelah ini?</label>
+                <textarea id="ref3" required rows="2" class="w-full text-sm border border-slate-300 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
               </div>
             </div>
 
-            <button type="submit" id="btnSubmitAction" class="w-full py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+            <button type="submit" id="btnSubmitAction" class="w-full py-4 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm rounded-xl shadow-lg transition shadow-amber-200">
               📤 Kirim Bukti Aksi Nyata
             </button>
           </form>
@@ -808,11 +842,13 @@
 
         const btn = document.getElementById("btnSubmitAction");
         btn.disabled = true;
-        btn.textContent = "Mengompres & Mengunggah Data...";
+        btn.innerHTML = `<span class="animate-pulse">Mengompres & Mengunggah... Mohon tunggu...</span>`;
 
         try {
+          // Kompres gambar dengan resolusi maks 500px dan kualitas 50%
           const base64Img = await compressImageToBase64(file);
           const ref = doc(db, "progress", currentStudent.nis);
+          
           await updateDoc(ref, {
             aksiSelesai: true,
             jenisAksi: document.getElementById("actType").value,
@@ -824,8 +860,8 @@
             lastActionDate: new Date().toISOString()
           });
 
-          showToast("🎉 Hebat! Bukti aksi nyata berhasil terkirim.");
-          closeModal();
+          showToast("🎉 Luar Biasa! Bukti aksi nyata berhasil terkirim.");
+          window.closeModal();
         } catch (err) {
           alert("Gagal mengunggah aksi: " + err.message);
           btn.disabled = false;
@@ -856,6 +892,8 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
+            
+            // Format JPEG dengan quality 0.5 cukup untuk mereduksi ukuran drastis
             resolve(canvas.toDataURL('image/jpeg', 0.5));
           };
           img.onerror = (e) => reject(e);
@@ -871,9 +909,9 @@
         "Masukkan PIN Keamanan untuk Membuka Dashboard",
         `
           <div class="space-y-4">
-            <input type="password" id="teacherPassInput" placeholder="Masukkan password guru..." class="w-full text-sm border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
-            <p class="text-[11px] text-slate-500">*Gunakan password resmi pengajar.</p>
-            <button onclick="verifyTeacherLogin()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-lg transition">
+            <input type="password" id="teacherPassInput" placeholder="Masukkan password guru..." class="w-full text-sm font-medium border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 outline-none">
+            <p class="text-[11px] font-semibold text-slate-500">*Gunakan password resmi pengajar (huruf kecil semua).</p>
+            <button onclick="window.verifyTeacherLogin()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl shadow-lg transition">
               Verifikasi & Masuk
             </button>
           </div>
@@ -884,12 +922,12 @@
     window.verifyTeacherLogin = function() {
       const pass = document.getElementById("teacherPassInput").value.trim();
       if (pass === "guruhebat") {
-        closeModal();
+        window.closeModal();
         document.getElementById("loginPage").classList.add("hidden");
         document.getElementById("teacherApp").classList.remove("hidden");
         initTeacherRealtime();
       } else {
-        alert("Password guru salah! Pastikan huruf kecil semua.");
+        alert("Password guru salah! Pastikan ketik 'guruhebat'.");
       }
     };
 
@@ -927,7 +965,7 @@
         });
 
         renderTeacherStats();
-        renderTeacherTable();
+        window.renderTeacherTable(); // Call global function
       });
     }
 
@@ -944,25 +982,25 @@
 
       const tbody = document.getElementById("teacherTableBody");
       tbody.innerHTML = filtered.map(r => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="p-3 font-mono font-medium">${r.nis}</td>
-          <td class="p-3 font-semibold text-slate-900">${r.nama}</td>
-          <td class="p-3">${r.kelas}</td>
-          <td class="p-3 text-center">${r.m1 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center">${r.m2 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center">${r.m3 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center">${r.m4 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center">${r.m5 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center">${r.m6 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center">${r.m7 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
-          <td class="p-3 text-center font-bold">${r.quizPercent}</td>
-          <td class="p-3 text-center">
-            ${r.aksi ? `<button onclick="viewActionProof('${r.nis}')" class="text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded font-bold">Lihat</button>` : '<span class="text-slate-300">-</span>'}
+        <tr class="hover:bg-slate-100 transition border-b border-slate-50 last:border-0">
+          <td class="p-4 font-mono font-bold text-slate-500">${r.nis}</td>
+          <td class="p-4 font-bold text-slate-900">${r.nama}</td>
+          <td class="p-4"><span class="bg-slate-200 text-slate-700 px-2 py-1 rounded font-bold text-[10px]">${r.kelas}</span></td>
+          <td class="p-2 text-center text-sm">${r.m1 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center text-sm">${r.m2 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center text-sm">${r.m3 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center text-sm">${r.m4 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center text-sm">${r.m5 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center text-sm">${r.m6 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center text-sm">${r.m7 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300 font-bold">○</span>'}</td>
+          <td class="p-2 text-center font-bold ${r.quizPercent !== '-' ? 'text-emerald-700' : 'text-slate-400'}">${r.quizPercent}</td>
+          <td class="p-4 text-center">
+            ${r.aksi ? `<button onclick="window.viewActionProof('${r.nis}')" class="text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-3 py-1 rounded-lg font-bold text-[11px] shadow-sm transition">Lihat</button>` : '<span class="text-slate-300 font-bold">-</span>'}
           </td>
-          <td class="p-3">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+          <td class="p-4">
+            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold ${
               r.status === 'SELESAI' ? 'bg-emerald-100 text-emerald-800' :
-              r.status === 'BERPROSES' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'
+              r.status === 'BERPROSES' ? 'bg-amber-100 text-amber-800' : 'bg-rose-50 text-rose-600'
             }">${r.status}</span>
           </td>
         </tr>
@@ -973,12 +1011,12 @@
       const row = teacherLiveRows.find(r => r.nis === nis);
       if (!row || !row.fotoBukti) return;
       setModal(
-        `Bukti Aksi: ${row.nama} (${row.kelas})`,
-        `NIS: ${row.nis}`,
+        `Bukti Aksi: ${row.nama}`,
+        `NIS: ${row.nis} • Kelas: ${row.kelas}`,
         `
-          <div class="space-y-3 text-center">
-            <img src="${row.fotoBukti}" alt="Foto Bukti" class="rounded-2xl max-h-80 mx-auto shadow border border-slate-200">
-            <p class="text-xs text-slate-500">Bukti foto telah terkompresi otomatis saat pengiriman siswa.</p>
+          <div class="space-y-3 text-center bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <img src="${row.fotoBukti}" alt="Foto Bukti" class="rounded-xl max-h-80 mx-auto shadow-md border border-slate-300">
+            <p class="text-[11px] font-bold text-slate-500 pt-2">Foto telah terkompresi otomatis dengan resolusi ringan.</p>
           </div>
         `
       );
@@ -990,11 +1028,11 @@
         "Konfirmasi Keluar",
         "Apakah kamu ingin berganti akun?",
         `
-          <div class="space-y-4 text-center">
-            <p class="text-xs text-slate-600">Semua progress yang telah kamu selesaikan sudah tersimpan aman di database.</p>
-            <div class="flex gap-2">
-              <button onclick="closeModal()" class="flex-1 py-2.5 bg-slate-100 font-bold text-xs rounded-xl">Batal</button>
-              <button onclick="location.reload()" class="flex-1 py-2.5 bg-rose-600 text-white font-bold text-xs rounded-xl shadow">Ya, Keluar</button>
+          <div class="space-y-4 text-center p-2">
+            <p class="text-sm font-medium text-slate-600">Semua progres materi, kuis, dan aksi nyata yang telah kamu selesaikan sudah tersimpan aman di database.</p>
+            <div class="flex gap-3 pt-2">
+              <button onclick="window.closeModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">Batal</button>
+              <button onclick="location.reload()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-rose-200 transition">Ya, Keluar</button>
             </div>
           </div>
         `
@@ -1008,26 +1046,44 @@
       const b = document.getElementById("modalBackdrop");
       b.classList.remove("hidden");
       b.classList.add("flex");
+      // Mencegah background scroll saat modal terbuka
+      document.body.style.overflow = "hidden";
     }
 
     window.closeModal = function() {
       const b = document.getElementById("modalBackdrop");
       b.classList.add("hidden");
       b.classList.remove("flex");
+      document.body.style.overflow = "auto";
     };
 
     function showToast(msg) {
       const t = document.getElementById("toast");
       t.textContent = msg;
       t.classList.remove("hidden");
-      setTimeout(() => t.classList.add("hidden"), 3500);
+      t.classList.add("translate-y-0", "opacity-100");
+      setTimeout(() => {
+        t.classList.add("hidden");
+      }, 3500);
     }
 
     function hideLoading() {
-      document.getElementById("loading").classList.add("hidden");
+      const loadingEl = document.getElementById("loading");
+      loadingEl.classList.add("opacity-0");
+      setTimeout(() => {
+        loadingEl.classList.add("hidden");
+        loadingEl.classList.remove("flex", "opacity-0");
+      }, 500);
     }
 
-    // Jalankan inisialisasi awal
+    // Mencegah klik di luar modal menutup jika sedang mengisi form (UX improvement)
+    document.getElementById("modalBackdrop").addEventListener("click", function(e) {
+      if(e.target === this) {
+         // Biarkan kosong agar user wajib menekan tombol [X]
+      }
+    });
+
+    // Jalankan inisialisasi awal saat web dimuat
     initApp();
   </script>
 </body>
