@@ -212,10 +212,10 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
-      getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, onSnapshot 
+      getFirestore, collection, doc, getDocs, setDoc, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Konfigurasi Database Firebase Anda
+    // Konfigurasi Database Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAHUBrmU090Uqs-JeRf44f0KnOut2clGnE",
       authDomain: "rumah-sehat-2257b.firebaseapp.com",
@@ -229,7 +229,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Data Master Siswa Default (Bisa diedit/ditambah)
+    // Data Master Siswa
     const defaultRoster = [
       {nis:'1001',nama:'AMIRA',kelas:'XA'},{nis:'1002',nama:'ARI SULTAN',kelas:'XA'},
       {nis:'1003',nama:'DIPA',kelas:'XA'},{nis:'1004',nama:'FITRI',kelas:'XA'},
@@ -325,7 +325,6 @@
       }
     }
 
-    // Penormalan data agar tahan terhadap huruf kapital (NIS vs nis) dari data lama
     function normalizeStudentData(docSnap) {
       const data = docSnap.data();
       return {
@@ -378,7 +377,7 @@
 
     window.startStudentSession = function() {
       const nis = document.getElementById("nameSelect").value;
-      if (!nis || nis === "undefined") return; // Pengaman jika kosong
+      if (!nis || nis === "undefined") return;
 
       const student = studentsData.find(s => String(s.nis) === String(nis));
       
@@ -421,7 +420,7 @@
     }
 
     function listenProgress(nis) {
-      if (!nis || nis === "undefined") return; // Safety check mutlak untuk Firebase
+      if (!nis || nis === "undefined") return;
       if (unsubscribeProgress) unsubscribeProgress();
       const ref = doc(db, "progress", String(nis));
       
@@ -434,8 +433,7 @@
             misi5:false, misi6:false, misi7:false,
             nama: currentStudent.nama, kelas: currentStudent.kelas, nis: currentStudent.nis
           };
-          // Buat dokumen progress pertama kali
-          setDoc(ref, progressData).catch(err => console.error("Error pembuatan progress:", err));
+          setDoc(ref, progressData, { merge: true }).catch(err => console.error("Error pembuatan progress:", err));
         }
         updateProgressUI();
       });
@@ -463,15 +461,15 @@
     window.markMissionComplete = async function(missionNumber) {
       if (!currentStudent) return;
       try {
-        const ref = doc(db, "progress", currentStudent.nis);
-        await updateDoc(ref, {
+        const ref = doc(db, "progress", String(currentStudent.nis));
+        await setDoc(ref, {
           [`misi${missionNumber}`]: true,
           lastUpdated: new Date().toISOString()
-        });
+        }, { merge: true });
         showToast(`🎉 Hebat! Misi ${missionNumber} Berhasil Diselesaikan!`);
         window.closeModal();
       } catch (err) {
-        showToast("Gagal menyimpan progress: " + err.message);
+        showToast("Gagal menyimpan progress: " + (err.message || String(err)));
       }
     };
 
@@ -765,16 +763,16 @@
 
         if (pass && currentStudent) {
           try {
-            await updateDoc(doc(db, "progress", currentStudent.nis), {
+            await setDoc(doc(db, "progress", String(currentStudent.nis)), {
               misi7: true,
               quizScore: score,
               quizPercent: percent,
               quizStatus: "LULUS",
               lastUpdated: new Date().toISOString()
-            });
+            }, { merge: true });
             showToast("✓ Skor Kuis Berhasil Dicatat di Database!");
           } catch (err) {
-            showToast("Error simpan kuis: " + err.message);
+            showToast("Error simpan kuis: " + (err.message || String(err)));
           }
         }
       };
@@ -807,7 +805,7 @@
             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
               <label class="block text-xs font-bold text-slate-700 uppercase mb-2">3. Foto Bukti Tindakan</label>
               <input type="file" id="actPhoto" accept="image/*" required class="w-full text-sm bg-white border border-slate-300 rounded-xl p-2.5 file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer">
-              <small class="text-[11px] font-medium text-slate-500 block mt-2 leading-tight">Foto akan dikompresi otomatis. Tidak wajib memperlihatkan wajah.</small>
+              <small class="text-[11px] font-medium text-slate-500 block mt-2 leading-tight">Foto dikompresi otomatis tanpa memakan kuota HP. Tidak wajib memperlihatkan wajah.</small>
             </div>
 
             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4">
@@ -835,21 +833,28 @@
 
       document.getElementById("actionForm").onsubmit = async (e) => {
         e.preventDefault();
-        if (!currentStudent) return;
+        if (!currentStudent) {
+          alert("Sesi siswa belum aktif. Silakan masuk kembali.");
+          return;
+        }
 
-        const file = document.getElementById("actPhoto").files[0];
-        if (!file) return;
+        const fileInput = document.getElementById("actPhoto");
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) {
+          alert("Silakan pilih file foto terlebih dahulu.");
+          return;
+        }
 
         const btn = document.getElementById("btnSubmitAction");
         btn.disabled = true;
         btn.innerHTML = `<span class="animate-pulse">Mengompres & Mengunggah... Mohon tunggu...</span>`;
 
         try {
-          // Kompres gambar dengan resolusi maks 500px dan kualitas 50%
+          // Kompres foto menggunakan URL.createObjectURL yang sangat ringan di memori HP
           const base64Img = await compressImageToBase64(file);
-          const ref = doc(db, "progress", currentStudent.nis);
+          const ref = doc(db, "progress", String(currentStudent.nis));
           
-          await updateDoc(ref, {
+          await setDoc(ref, {
             aksiSelesai: true,
             jenisAksi: document.getElementById("actType").value,
             deskripsiAksi: document.getElementById("actDesc").value,
@@ -858,26 +863,31 @@
             refleksi2: document.getElementById("ref2").value,
             refleksi3: document.getElementById("ref3").value,
             lastActionDate: new Date().toISOString()
-          });
+          }, { merge: true });
 
           showToast("🎉 Luar Biasa! Bukti aksi nyata berhasil terkirim.");
           window.closeModal();
         } catch (err) {
-          alert("Gagal mengunggah aksi: " + err.message);
+          console.error("Gagal unggah:", err);
+          const errorDetail = err && err.message ? err.message : String(err);
+          alert("Gagal mengunggah aksi: " + errorDetail);
           btn.disabled = false;
           btn.textContent = "Kirim Bukti Aksi Nyata";
         }
       };
     };
 
+    // Fungsi kompresi gambar berbasis URL.createObjectURL (Anti-Crash di HP)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
+        if (!file) return reject(new Error("File foto tidak ditemukan."));
+
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          try {
             const canvas = document.createElement('canvas');
             const MAX_WIDTH = 500;
             let width = img.width;
@@ -892,13 +902,21 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            
-            // Format JPEG dengan quality 0.5 cukup untuk mereduksi ukuran drastis
-            resolve(canvas.toDataURL('image/jpeg', 0.5));
-          };
-          img.onerror = (e) => reject(e);
+
+            // Kompresi JPEG kualitas 50% menghasilkan ukuran super ringan (sekitar 30 - 60 KB)
+            const base64 = canvas.toDataURL('image/jpeg', 0.5);
+            resolve(base64);
+          } catch (canvasErr) {
+            reject(new Error("Gagal mengompres gambar: " + (canvasErr.message || String(canvasErr))));
+          }
         };
-        reader.onerror = (e) => reject(e);
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Format foto tidak dapat dibaca oleh browser ponsel."));
+        };
+
+        img.src = url;
       });
     }
 
@@ -965,7 +983,7 @@
         });
 
         renderTeacherStats();
-        window.renderTeacherTable(); // Call global function
+        window.renderTeacherTable();
       });
     }
 
@@ -1046,7 +1064,6 @@
       const b = document.getElementById("modalBackdrop");
       b.classList.remove("hidden");
       b.classList.add("flex");
-      // Mencegah background scroll saat modal terbuka
       document.body.style.overflow = "hidden";
     }
 
@@ -1076,14 +1093,6 @@
       }, 500);
     }
 
-    // Mencegah klik di luar modal menutup jika sedang mengisi form (UX improvement)
-    document.getElementById("modalBackdrop").addEventListener("click", function(e) {
-      if(e.target === this) {
-         // Biarkan kosong agar user wajib menekan tombol [X]
-      }
-    });
-
-    // Jalankan inisialisasi awal saat web dimuat
     initApp();
   </script>
 </body>
