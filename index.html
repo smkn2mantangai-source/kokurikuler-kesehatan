@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MISSION: RUMAH SEHAT</title>
+<title>MISSION: RUMAH SEHAT KITA</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -82,9 +82,14 @@
           <div class="text-[11px] text-slate-500 font-medium tracking-wide uppercase">Kokurikuler Kesehatan</div>
         </div>
       </div>
-      <div class="text-right">
-        <strong id="studentName" class="block text-slate-800 text-sm"></strong>
-        <span id="studentClass" class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md"></span>
+      <div class="flex items-center gap-3">
+        <div class="text-right">
+          <strong id="studentName" class="block text-slate-800 text-sm"></strong>
+          <span id="studentClass" class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md"></span>
+        </div>
+        <button id="btnExit" class="w-9 h-9 ml-1 flex items-center justify-center bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-600 rounded-xl transition-all" title="Keluar">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+        </button>
       </div>
     </div>
   </header>
@@ -643,7 +648,7 @@
     `);
     
     document.getElementById("btnLoginGuru").addEventListener("click", () => {
-      if(document.getElementById("passGuru").value === "1234") { // DEFAULT PIN GURU
+      if(document.getElementById("passGuru").value === "guruhebat") { 
         closeModal();
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("teacherApp").style.display = "block";
@@ -652,6 +657,21 @@
         document.getElementById("errGuru").classList.remove("hidden");
       }
     });
+  });
+
+  document.getElementById("btnExit").addEventListener("click", () => {
+    showModal("🚪 Konfirmasi Keluar", "Ganti Akun Siswa", `
+      <p class="text-sm mb-5 text-slate-600">Apakah kamu yakin ingin keluar? Progres misi kamu sudah otomatis tersimpan dengan aman.</p>
+      <div class="flex gap-3">
+        <button class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors" onclick="document.getElementById('closeModalBtn').click()">Batal</button>
+        <button class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-red-200" id="confirmExitBtn">Ya, Keluar</button>
+      </div>
+    `);
+    
+    setTimeout(() => {
+      const exitBtn = document.getElementById("confirmExitBtn");
+      if(exitBtn) exitBtn.addEventListener("click", () => location.reload());
+    }, 50);
   });
 
   function initTeacherRealtime() {
