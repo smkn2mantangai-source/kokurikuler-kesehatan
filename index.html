@@ -1,772 +1,1034 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MISSION: RUMAH SEHAT KITA</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-  .mission-card { transition: all 0.2s ease; }
-  .mission-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
-  .progress-fill { transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-  .modal-overlay { backdrop-filter: blur(4px); }
-  .hide-scroll::-webkit-scrollbar { display: none; }
-  
-  /* Loading Spinner */
-  .spinner {
-    width: 50px; height: 50px;
-    border: 5px solid #e2e8f0; border-top-color: #10b981;
-    border-radius: 50%; animation: spin 1s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  
-  /* Animasi Modal */
-  .modal-enter { opacity: 0; transform: scale(0.95); }
-  .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 300ms, transform 300ms; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MISSION: RUMAH SEHAT - DPL Kesehatan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); }
+  </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
 
-<div id="loadingScreen" class="fixed inset-0 bg-white/90 modal-overlay z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
-  <div class="spinner mb-4"></div>
-  <h2 class="text-lg font-bold text-slate-700" id="loadingText">Menghubungkan ke Firebase...</h2>
-  <p class="text-sm text-slate-500 mt-2 max-w-xs text-center" id="loadingSub">Mohon tunggu sebentar, sedang menginisialisasi database.</p>
-</div>
-
-<!-- Halaman Login -->
-<section id="loginPage" class="hidden min-h-screen items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-white to-amber-50">
-  <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-8 text-center relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
-    
-    <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner">🏠</div>
-    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">MISSION: RUMAH SEHAT</h1>
-    <p class="text-slate-500 font-medium mt-2 mb-8">Saat Asap Datang, Kita Siap</p>
-    
-    <div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4 text-left mb-6">
-      <span class="block text-emerald-800 font-bold mb-1">🎯 Misi hari ini</span>
-      <span class="text-sm text-emerald-700">Belajar menjaga kesehatan diri dan lingkungan ketika terjadi kabut asap (karhutla).</span>
-    </div>
-
-    <div class="space-y-4 text-left">
-      <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Pilih Kelas</label>
-        <select id="classSelect" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
-          <option value="">-- Pilih Kelas --</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Pilih Nama Kamu</label>
-        <select id="nameSelect" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50" disabled>
-          <option value="">-- Pilih Nama --</option>
-        </select>
-      </div>
-    </div>
-
-    <button id="startBtn" class="w-full mt-8 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-200" disabled>🚀 MULAI MISI</button>
-
-    <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between">
-      <button class="text-slate-400 hover:text-emerald-600 font-medium text-sm transition-colors" id="btnAdmin">👨‍🏫 Dasbor Guru</button>
-    </div>
+  <!-- LOADING SPINNER -->
+  <div id="loading" class="fixed inset-0 bg-white/95 z-50 flex flex-col items-center justify-center gap-3">
+    <div class="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+    <p class="text-sm font-semibold text-slate-600" id="loadingText">Menyiapkan Aplikasi...</p>
   </div>
-</section>
 
-<div id="studentApp" class="hidden min-h-screen bg-slate-50">
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-lg shadow-inner">🏠</div>
-        <div>
-          <h1 class="font-bold text-slate-800 leading-tight">RUMAH SEHAT</h1>
-          <div class="text-[11px] text-slate-500 font-medium tracking-wide uppercase">Kokurikuler Kesehatan</div>
-        </div>
+  <!-- TOAST NOTIFIKASI -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl hidden transition-all duration-300"></div>
+
+  <!-- ==================== HALAMAN LOGIN SISWA ==================== -->
+  <section id="loginPage" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100">
+    <div class="max-w-md w-full glass border border-emerald-100 rounded-3xl p-8 shadow-2xl relative">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner">🏠</div>
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">MISSION: RUMAH SEHAT</h1>
+        <p class="text-xs font-semibold text-emerald-700 uppercase tracking-widest mt-1">DPL Kesehatan • Kesiapsiagaan Asap</p>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="text-right">
-          <strong id="studentName" class="block text-slate-800 text-sm"></strong>
-          <span id="studentClass" class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md"></span>
-        </div>
-        <button id="btnExit" class="w-9 h-9 ml-1 flex items-center justify-center bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-600 rounded-xl transition-all" title="Keluar">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
-        </button>
-      </div>
-    </div>
-  </header>
 
-  <main class="max-w-4xl mx-auto px-4 py-6 pb-20">
-    <section class="bg-gradient-to-br from-emerald-800 to-teal-700 text-white rounded-3xl p-6 md:p-8 mb-6 shadow-xl relative overflow-hidden">
-      <div class="absolute top-0 right-0 opacity-10 transform translate-x-4 -translate-y-4 text-9xl">🌿</div>
-      <span class="inline-block text-[10px] md:text-xs font-bold bg-white/20 px-3 py-1 rounded-full mb-3 backdrop-blur-md">DIMENSI PROFIL LULUSAN</span>
-      <h2 class="text-2xl md:text-3xl font-extrabold mb-2 leading-tight">Saat Asap Datang, Kita Siap.</h2>
-      <p class="text-emerald-50 max-w-lg text-sm md:text-base opacity-90">Rumahmu adalah benteng pertama. Pahami materinya, latih keputusannya, dan lakukan aksi nyata untuk melindungi kesehatan keluargamu.</p>
-    </section>
-
-    <section class="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-slate-100">
-      <div class="flex justify-between items-end mb-2">
-        <strong class="text-slate-700 font-bold">Progres Penuntasan</strong>
-        <strong id="progressText" class="text-emerald-600 text-lg font-black">0 / 7</strong>
-      </div>
-      <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
-        <div id="progressFill" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 progress-fill w-0 rounded-full"></div>
-      </div>
-    </section>
-
-    <h2 class="font-extrabold text-slate-800 text-xl mb-4 flex items-center gap-2">🗺️ Peta Perjalanan Misi</h2>
-    <div id="missionGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Diinjeksi via JavaScript -->
-    </div>
-
-    <section class="mt-8 bg-amber-50 border border-amber-200 rounded-3xl p-6 md:p-8 text-center relative overflow-hidden">
-      <div class="absolute -top-4 -left-4 text-6xl opacity-20">🏆</div>
-      <h2 class="text-2xl font-extrabold text-amber-900 mb-2 relative z-10">Tugas Aksi Nyata</h2>
-      <p class="text-amber-700 text-sm md:text-base mb-6 max-w-md mx-auto relative z-10">Lakukan satu tindakan sederhana di rumah untuk menjaga kesehatan selama kondisi udara kurang baik, lalu dokumentasikan.</p>
-      <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-amber-200 relative z-10" id="btnAction">📸 LAPORKAN AKSI</button>
-    </section>
-  </main>
-</div>
-
-<div id="teacherApp" class="hidden min-h-screen bg-slate-100">
-  <header class="bg-slate-800 text-white border-b border-slate-700 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center text-lg">📊</div>
-        <div>
-          <h1 class="font-bold leading-tight">MONITORING GURU (REAL-TIME)</h1>
-          <div class="text-[11px] text-slate-400 font-medium flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Terhubung ke Firebase</div>
-        </div>
-      </div>
-      <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all" onclick="location.reload()">Tutup</button>
-    </div>
-  </header>
-  <main class="max-w-7xl mx-auto px-4 py-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="stats">
-      <!-- Diinjeksi -->
-    </div>
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-        <h2 class="font-bold text-slate-800 text-lg">Daftar Pengerjaan Siswa</h2>
-        <select id="classFilter" class="p-2 bg-white border border-slate-300 rounded-lg text-sm outline-none focus:border-emerald-500">
-          <option value="">Semua Kelas</option>
-        </select>
-      </div>
-      <div class="overflow-x-auto hide-scroll">
-        <table class="w-full text-sm text-left text-slate-600">
-          <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th class="px-4 py-3">Nama Siswa</th>
-              <th class="px-4 py-3">Kelas</th>
-              <th class="px-2 py-3 text-center" title="Misi 1">M1</th>
-              <th class="px-2 py-3 text-center" title="Misi 2">M2</th>
-              <th class="px-2 py-3 text-center" title="Misi 3">M3</th>
-              <th class="px-2 py-3 text-center" title="Misi 4">M4</th>
-              <th class="px-2 py-3 text-center" title="Misi 5">M5</th>
-              <th class="px-2 py-3 text-center" title="Misi 6">M6</th>
-              <th class="px-4 py-3 text-center">Kuis</th>
-              <th class="px-4 py-3 text-center">Aksi (Foto)</th>
-              <th class="px-4 py-3">Status</th>
-            </tr>
-          </thead>
-          <tbody id="teacherBody" class="divide-y divide-slate-100">
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </main>
-</div>
-
-<div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[200] bg-slate-800 text-white px-6 py-3 rounded-xl shadow-2xl font-medium text-sm transition-all duration-300 translate-y-20 opacity-0"></div>
-
-<div id="modal" class="fixed inset-0 bg-slate-900/60 modal-overlay z-50 hidden flex-col items-center justify-center p-4">
-  <div class="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl shadow-2xl overflow-hidden modal-enter" id="modalBox">
-    <div class="p-5 md:p-6 border-b border-slate-100 flex justify-between items-start bg-slate-50">
-      <div>
-        <h2 id="modalTitle" class="text-xl font-extrabold text-slate-800 leading-tight"></h2>
-        <small id="modalSub" class="text-emerald-600 font-bold text-xs uppercase tracking-wider"></small>
-      </div>
-      <button class="w-8 h-8 flex items-center justify-center bg-slate-200 hover:bg-red-100 hover:text-red-600 text-slate-500 rounded-full font-bold transition-colors" id="closeModalBtn">×</button>
-    </div>
-    <div id="modalContent" class="p-5 md:p-6 overflow-y-auto bg-white text-slate-600 space-y-4"></div>
-  </div>
-</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-  import { getFirestore, collection, doc, setDoc, getDocs, getDoc, updateDoc, onSnapshot, query, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-  // KONFIGURASI FIREBASE ANDA
-  const firebaseConfig = {
-    apiKey: "AIzaSyAHUBrmU090Uqs-JeRf44f0KnOut2clGnE",
-    authDomain: "rumah-sehat-2257b.firebaseapp.com",
-    projectId: "rumah-sehat-2257b",
-    storageBucket: "rumah-sehat-2257b.firebasestorage.app",
-    messagingSenderId: "1079637949718",
-    appId: "1:1079637949718:web:8cb3c2dc878fb6fcada437",
-    measurementId: "G-NDDBQL6VPR"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const INITIAL_STUDENTS = [
-    {kelas: 'XA', nama: 'AMIRA'}, {kelas: 'XA', nama: 'ARI SULTAN'}, {kelas: 'XA', nama: 'DIPA'}, {kelas: 'XA', nama: 'FITRI'}, {kelas: 'XA', nama: 'GESTI PUJI HASTUTI'}, {kelas: 'XA', nama: 'JONIA GITA'}, {kelas: 'XA', nama: 'KHAIRUNNISA'}, {kelas: 'XA', nama: 'KIRANA AZ ZAHRA S.'}, {kelas: 'XA', nama: 'LAILATUL KAMARIYAH'}, {kelas: 'XA', nama: 'M. AQSAN'}, {kelas: 'XA', nama: 'M. REZKY'}, {kelas: 'XA', nama: 'PARIS HAMDICKY'}, {kelas: 'XA', nama: 'RIRIN'}, {kelas: 'XA', nama: 'SARIPAH'}, {kelas: 'XA', nama: 'SERIF'}, {kelas: 'XA', nama: 'YAHUDA SETIAWAN'}, {kelas: 'XA', nama: 'YOGA PEBRIAN'},
-    {kelas: 'XB', nama: 'AHMAD REIHAN HAFIDZ'}, {kelas: 'XB', nama: 'AHMAD SAPUTRA'}, {kelas: 'XB', nama: 'ASEP FAISAL RAMADHAN'}, {kelas: 'XB', nama: 'BATUR'}, {kelas: 'XB', nama: 'GLEN HARNANDO'}, {kelas: 'XB', nama: 'LIA'}, {kelas: 'XB', nama: 'MARSA'}, {kelas: 'XB', nama: 'MIKHA'}, {kelas: 'XB', nama: 'MIKHA DWI FRANSISKA'}, {kelas: 'XB', nama: 'MUHAMAD NAZRI'}, {kelas: 'XB', nama: 'NURMA'}, {kelas: 'XB', nama: 'REPA FITRIA'}, {kelas: 'XB', nama: 'SAFFA'}, {kelas: 'XB', nama: 'SERIFAH'}, {kelas: 'XB', nama: 'SITI SOLEHAH'}, {kelas: 'XB', nama: 'YUAN ANSON PRATAMA'}, {kelas: 'XB', nama: 'ZAKIA'}, {kelas: 'XB', nama: 'NABILA'},
-    {kelas: 'XI ATPH', nama: 'Amelia Zahra'}, {kelas: 'XI ATPH', nama: 'Aulia Rahmah'}, {kelas: 'XI ATPH', nama: 'Bulan'}, {kelas: 'XI ATPH', nama: 'Duna'}, {kelas: 'XI ATPH', nama: 'Eko'}, {kelas: 'XI ATPH', nama: 'Fandi'}, {kelas: 'XI ATPH', nama: 'Luna Maya'}, {kelas: 'XI ATPH', nama: 'Mulkan'}, {kelas: 'XI ATPH', nama: 'Pitae'}, {kelas: 'XI ATPH', nama: 'Raditiya Meizi'}, {kelas: 'XI ATPH', nama: 'Raudah'}, {kelas: 'XI ATPH', nama: 'Ryansyah'}, {kelas: 'XI ATPH', nama: 'Salatiah'}, {kelas: 'XI ATPH', nama: 'Santia'}, {kelas: 'XI ATPH', nama: 'Tinos'}, {kelas: 'XI ATPH', nama: 'Yosua Christiando'},
-    {kelas: 'XI ATP', nama: 'AHMAD JAILANI'}, {kelas: 'XI ATP', nama: 'AHMAD YUHANI'}, {kelas: 'XI ATP', nama: 'Akhmad mahdiani'}, {kelas: 'XI ATP', nama: 'Arindhia'}, {kelas: 'XI ATP', nama: 'Atak'}, {kelas: 'XI ATP', nama: 'Jahdi'}, {kelas: 'XI ATP', nama: 'M. arfani'}, {kelas: 'XI ATP', nama: 'M.SAMUJI'}, {kelas: 'XI ATP', nama: 'Muhammad Alvino'}, {kelas: 'XI ATP', nama: 'Muhammad Rafli'}, {kelas: 'XI ATP', nama: 'NORAI\'INTAN'}, {kelas: 'XI ATP', nama: 'Nur inaya'}, {kelas: 'XI ATP', nama: 'Nurtiya'}, {kelas: 'XI ATP', nama: 'Reno Wijaya'}, {kelas: 'XI ATP', nama: 'Risky saputra'}, {kelas: 'XI ATP', nama: 'SAMUEL'}
-  ];
-
-  // Variabel Global state
-  let classData = {}; 
-  let currentStudent = null;
-  let unsubscribeTeacher = null;
-  
-  const missions = [
-    ["01", "APA YANG TERJADI?", "Pahami krisis udara akibat Karhutla."],
-    ["02", "KENALI ASAP", "Bahaya mikroskopis PM2.5."],
-    ["03", "APA DAMPAKNYA?", "Identifikasi dampak buruk kabut asap."],
-    ["04", "LINDUNGI DIRI", "Strategi 'Shelter in Place'."],
-    ["05", "RUMAH DETECTIVE", "Audit ventilasi & kebersihan."],
-    ["06", "KEPUTUSAN CEPAT", "Simulasi pengambilan keputusan."],
-    ["07", "FINAL QUIZ", "Uji pemahaman mitigasi."]
-  ];
-
-  const QUIZ_ANSWERS = [1, 0, 2, 0, 1, 2, 0, 1, 2, 0, 1, 3, 2, 1, 0];
-
-  window.onload = async () => {
-    try {
-      await signInAnonymously(auth);
-      await checkAndSetupDatabase();
-      await loadClasses();
-      hideLoading();
-    } catch (e) {
-      document.getElementById('loadingText').textContent = "Gagal terhubung ke Firebase.";
-      document.getElementById('loadingSub').textContent = e.message;
-      document.getElementById('loadingText').classList.add('text-red-600');
-    }
-  };
-
-  async function checkAndSetupDatabase() {
-    const snap = await getDocs(query(collection(db, "students"), where("kelas", "==", "XA")));
-    if (snap.empty) {
-      document.getElementById('loadingSub').textContent = "Menyiapkan data siswa pertama kali...";
-      const batch = writeBatch(db);
-      INITIAL_STUDENTS.forEach((s) => {
-        const id = s.kelas.replace(/\s+/g,'_') + '_' + s.nama.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
-        const docRef = doc(collection(db, "students"), id);
-        batch.set(docRef, { ...s, id: id });
-      });
-      await batch.commit();
-    }
-  }
-
-  async function loadClasses() {
-    const snap = await getDocs(collection(db, "students"));
-    classData = {};
-    snap.forEach(doc => {
-      const d = doc.data();
-      if (!classData[d.kelas]) classData[d.kelas] = [];
-      classData[d.kelas].push(d);
-    });
-
-    const cSelect = document.getElementById("classSelect");
-    Object.keys(classData).sort().forEach(k => {
-      const opt = document.createElement("option"); opt.value = k; opt.textContent = k;
-      cSelect.appendChild(opt);
-    });
-  }
-
-  document.getElementById("classSelect").addEventListener("change", (e) => {
-    const k = e.target.value;
-    const nSelect = document.getElementById("nameSelect");
-    nSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
-    document.getElementById("startBtn").disabled = true;
-    
-    if (k && classData[k]) {
-      nSelect.disabled = false;
-      classData[k].sort((a,b)=>a.nama.localeCompare(b.nama)).forEach(s => {
-        const opt = document.createElement("option"); opt.value = s.id; opt.textContent = s.nama;
-        nSelect.appendChild(opt);
-      });
-    } else { nSelect.disabled = true; }
-  });
-
-  document.getElementById("nameSelect").addEventListener("change", (e) => {
-    document.getElementById("startBtn").disabled = !e.target.value;
-  });
-
-  document.getElementById("startBtn").addEventListener("click", async () => {
-    const id = document.getElementById("nameSelect").value;
-    const k = document.getElementById("classSelect").value;
-    const stu = classData[k].find(x => x.id === id);
-    if(!stu) return;
-
-    document.getElementById("startBtn").disabled = true;
-    document.getElementById("startBtn").innerHTML = '<div class="spinner !w-5 !h-5 mx-auto border-2"></div>';
-
-    currentStudent = stu;
-    
-    // Setup dokumen progress
-    const pRef = doc(db, "progress", currentStudent.id);
-    const pDoc = await getDoc(pRef);
-    if (!pDoc.exists()) {
-      await setDoc(pRef, {
-        nama: currentStudent.nama, kelas: currentStudent.kelas,
-        m1: false, m2: false, m3: false, m4: false, m5: false, m6: false, m7: false,
-        quizScore: 0, quizStatus: '',
-        aksiPhoto: '', aksiRefleksi: '',
-        status: 'Belum Mulai', lastUpdate: new Date().getTime()
-      });
-    }
-
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("studentApp").style.display = "block";
-    document.getElementById("studentName").textContent = currentStudent.nama;
-    document.getElementById("studentClass").textContent = currentStudent.kelas;
-    
-    renderMissions();
-    
-    // Realtime listener untuk siswa sendiri
-    onSnapshot(doc(db, "progress", currentStudent.id), (docSnap) => {
-      if(docSnap.exists()) updateProgressUI(docSnap.data());
-    });
-  });
-
-  function renderMissions() {
-    const grid = document.getElementById("missionGrid");
-    grid.innerHTML = missions.map((m, i) => `
-      <article class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm mission-card flex flex-col justify-between">
-        <div>
-          <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-black text-xl mb-3">${m[0]}</div>
-          <h3 class="font-bold text-slate-800 text-lg leading-tight mb-1">${m[1]}</h3>
-          <p class="text-slate-500 text-sm mb-5">${m[2]}</p>
-        </div>
-        <div>
-          <button class="w-full bg-slate-50 hover:bg-emerald-50 text-emerald-700 font-semibold py-2.5 rounded-lg border border-slate-200 transition-colors" data-mission="${i+1}">Mulai / Lanjut</button>
-          <div id="status${i+1}" class="text-xs font-bold text-amber-500 mt-3 text-center uppercase tracking-wide">○ Belum Selesai</div>
-        </div>
-      </article>`).join("");
-      
-      grid.querySelectorAll('button').forEach(b => {
-        b.addEventListener('click', (e) => openMission(parseInt(e.target.dataset.mission)));
-      });
-  }
-
-  function updateProgressUI(data) {
-    let n = 0;
-    for (let i = 1; i <= 7; i++) {
-      if (data["m" + i]) {
-        n++;
-        const s = document.getElementById("status" + i);
-        if (s) {
-          s.textContent = "✓ Selesai";
-          s.className = "text-xs font-bold text-emerald-600 mt-3 text-center uppercase tracking-wide";
-        }
-      }
-    }
-    document.getElementById("progressText").textContent = n + " / 7";
-    document.getElementById("progressFill").style.width = (n / 7 * 100) + "%";
-  }
-
-  function openMission(n) {
-    if (n === 1) showModal("01 — APA YANG TERJADI?", "Krisis Udara Karhutla", `
       <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">🌫️ Kabut Bukan Sekadar Asap</h3>
-        <p>Pagi ini udara di sekitar rumah tampak berkabut, kekuningan, dan berbau sangit. Jarak pandang menjadi sangat pendek. Ini bukan embun pagi, melainkan <strong>Kabut Asap akibat Kebakaran Hutan dan Lahan (Karhutla)</strong>.</p>
-        <p>Karhutla melepaskan berton-ton gas karbon monoksida (CO) dan debu mikro ke atmosfer.</p>
-        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mt-4">
-          <strong class="text-amber-800 block mb-1">Pertanyaan Analisa:</strong>
-          <p class="text-amber-900 text-sm">Menurutmu, apa yang terjadi pada kualitas udara yang kita hirup?</p>
-        </div>
-        <div class="space-y-2 mt-4" id="mcq-container">
-          <button class="mcq-btn w-full text-left p-3 border border-slate-200 rounded-xl hover:bg-emerald-50 outline-none transition-all" data-correct="true">Udara tercemar gas toksik dan partikel mikro berbahaya</button>
-          <button class="mcq-btn w-full text-left p-3 border border-slate-200 rounded-xl hover:bg-emerald-50 outline-none transition-all" data-correct="false">Udara menjadi lebih lembab karena tertutup awan</button>
-        </div>
-        <div id="mcq-result" class="hidden p-3 rounded-lg text-sm font-bold mt-2"></div>
-        <div class="pt-4 border-t border-slate-100"><button class="btn-finish w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md" data-m="${n}">✓ Tandai Misi ${n} Selesai</button></div>
-      </div>`);
-      
-    if (n === 2) showModal("02 — KENALI ASAP", "Bahaya Partikel Mikroskopis", `
-      <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">🔬 Mengenal PM2.5</h3>
-        <p>Asap karhutla sangat mematikan karena mengandung <strong>Particulate Matter 2.5 (PM2.5)</strong>. Partikel ini berukuran 30 kali lebih kecil dari rambut manusia, mampu menembus bulu hidung langsung ke paru-paru dan darah.</p>
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4" id="mcq-container">
-          <strong class="block mb-3 text-slate-700">QUICK CHECK: Mengapa PM2.5 sangat berbahaya?</strong>
-          <div class="space-y-2">
-            <button class="mcq-btn w-full text-left p-3 border border-slate-200 rounded-xl bg-white outline-none transition-all" data-correct="false">Ukurannya besar dan membuat hidung tersumbat.</button>
-            <button class="mcq-btn w-full text-left p-3 border border-slate-200 rounded-xl bg-white outline-none transition-all" data-correct="true">Sangat mikroskopis hingga bisa menembus masuk ke paru-paru dan darah.</button>
-          </div>
-          <div id="mcq-result" class="hidden p-3 rounded-lg text-sm font-bold mt-2"></div>
-        </div>
-        <div class="pt-4 border-t border-slate-100"><button class="btn-finish w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl" data-m="${n}">✓ Selesai</button></div>
-      </div>`);
-
-    if (n === 3) showModal("03 — APA DAMPAKNYA?", "Sinyal Bahaya Tubuh", `
-      <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">🫁 Kenali Sinyal Protes Tubuh</h3>
-        <p>Paparan PM2.5 memicu reaksi: Mata merah, batuk, sesak napas akut, dan pusing.</p>
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4" id="mcq-container">
-          <strong class="block mb-2 text-slate-700">Studi Kasus:</strong>
-          <p class="text-sm mb-3">Adikmu yang asma mulai batuk tanpa henti meski di dalam rumah.</p>
-          <div class="space-y-2 text-sm">
-            <button class="mcq-btn w-full text-left p-3 border rounded-xl bg-white outline-none" data-correct="true">Jauhkan dari ventilasi, pastikan udara bersih, cari bantuan medis.</button>
-            <button class="mcq-btn w-full text-left p-3 border rounded-xl bg-white outline-none" data-correct="false">Memintanya minum es yang banyak.</button>
-          </div>
-          <div id="mcq-result" class="hidden p-3 rounded-lg text-sm font-bold mt-2"></div>
-        </div>
-        <div class="pt-4 border-t border-slate-100"><button class="btn-finish w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl" data-m="${n}">✓ Selesai</button></div>
-      </div>`);
-
-    if (n === 4) showModal("04 — LINDUNGI DIRI", "Mitigasi & Shelter in Place", `
-      <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">🛡️ Shelter in Place</h3>
-        <p>Berlindung di ruangan tertutup. Gunakan masker N95 jika terpaksa keluar. Masker kain tidak ampuh.</p>
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4" id="mcq-container">
-          <p class="text-sm mb-3 font-semibold text-slate-700">Teman mengajak sepeda motoran saat kabut pekat.</p>
-          <div class="space-y-2 text-sm">
-            <button class="mcq-btn w-full text-left p-3 border rounded-xl bg-white" data-correct="false">"Gas! Mumpung sepi, tapi pakai masker kain aja."</button>
-            <button class="mcq-btn w-full text-left p-3 border rounded-xl bg-white" data-correct="true">"Maaf bro, kualitas udara bahaya. Kita di rumah aja."</button>
-          </div>
-          <div id="mcq-result" class="hidden p-3 rounded-lg text-sm font-bold mt-2"></div>
-        </div>
-        <div class="pt-4 border-t border-slate-100"><button class="btn-finish w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl" data-m="${n}">✓ Selesai</button></div>
-      </div>`);
-
-    if (n === 5) showModal("05 — RUMAH DETECTIVE", "Audit Kualitas Udara Rumah", `
-      <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-800">🕵️ Audit Rumahmu</h3>
-        <ul class="list-disc pl-5 space-y-2 text-slate-600">
-          <li>Cek Celah: Sumbat celah pintu/jendela dengan kain basah.</li>
-          <li>Kipas/AC: Jangan nyalakan kipas penyedot (Exhaust) ke luar.</li>
-          <li>Lantai: Pel basah, jangan sapu kering agar debu tidak terbang.</li>
-        </ul>
-        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg mt-4">
-          <strong class="text-emerald-800 block mb-1">Tantangan:</strong>
-          <p class="text-emerald-900 text-sm">Pilih 1 titik audit di atas, perbaiki nanti untuk laporan aksi nyata!</p>
-        </div>
-        <div class="pt-4 border-t border-slate-100"><button class="btn-finish w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl" data-m="${n}">✓ Selesai</button></div>
-      </div>`);
-
-    if (n === 6) showModal("06 — KEPUTUSAN CEPAT", "Simulasi Pengambilan Keputusan", `
-      <div class="space-y-5">
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200" id="mcq-container-1">
-          <strong class="block mb-2 text-slate-700">Situasi:</strong>
-          <p class="text-sm mb-3">Rumah pengap saat kabut asap. Ayah ingin buka jendela lebar-lebar.</p>
-          <div class="space-y-2 text-sm">
-            <button class="mcq-btn w-full text-left p-3 border rounded-xl bg-white" data-correct="true">Cegah sopan, jelaskan angin membawa partikel racun. Nyalakan kipas di dalam.</button>
-            <button class="mcq-btn w-full text-left p-3 border rounded-xl bg-white" data-correct="false">Setuju dan buka semua jendela.</button>
-          </div>
-          <div id="mcq-result-1" class="hidden p-3 rounded-lg text-sm font-bold mt-2"></div>
-        </div>
-        <div class="pt-4 border-t border-slate-100"><button class="btn-finish w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl" data-m="${n}">✓ Selesai</button></div>
-      </div>`);
-
-    if (n === 7) buildQuiz();
-    
-    // Bind Events dalam modal
-    setTimeout(() => {
-      document.querySelectorAll('.mcq-btn').forEach(b => {
-        b.addEventListener('click', (e) => {
-          const container = e.target.closest('div');
-          container.querySelectorAll('.mcq-btn').forEach(btn => btn.className = "mcq-btn w-full text-left p-3 border border-slate-200 rounded-xl bg-white");
-          const correct = e.target.getAttribute('data-correct') === 'true';
-          e.target.className = `mcq-btn w-full text-left p-3 border-2 rounded-xl ${correct ? 'border-emerald-500 bg-emerald-50' : 'border-red-500 bg-red-50'}`;
-          
-          const res = e.target.parentElement.nextElementSibling;
-          res.classList.remove("hidden");
-          res.className = `p-3 rounded-lg text-sm font-bold mt-3 ${correct ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`;
-          res.innerHTML = correct ? "✓ Analisa Tepat!" : "❌ Keputusan kurang aman.";
-        });
-      });
-      document.querySelectorAll('.btn-finish').forEach(b => {
-        b.addEventListener('click', async (e) => {
-          e.target.disabled = true;
-          e.target.textContent = "Menyimpan...";
-          const missionNum = parseInt(e.target.getAttribute('data-m'));
-          try {
-            await updateDoc(doc(db, "progress", currentStudent.id), { 
-              ["m"+missionNum]: true,
-              status: "Berproses",
-              lastUpdate: new Date().getTime()
-            });
-            closeModal();
-            showToast("🎉 Misi " + missionNum + " selesai!");
-          } catch(err) { showToast(err.message, 'err'); }
-        });
-      });
-    }, 100);
-  }
-
-  function buildQuiz() {
-    const qData = [
-      ["Sumber utama bencana kabut asap?", ["Letusan gunung", "Pembakaran hutan dan lahan", "Emisi pabrik", "Asap kendaraan"]],
-      ["Aktivitas yang HARUS SEGERA dikurangi saat berasap?", ["Aktivitas fisik luar ruangan", "Menonton TV", "Tidur siang", "Makan"]],
-      ["Mengapa asap Karhutla mematikan?", ["Meninggalkan bau", "Membuat pandangan terhalang", "Mengandung partikel PM2.5", "Menurunkan suhu"]],
-      ["Tanda sistem pernapasan terganggu?", ["Batuk dan sesak napas", "Kulit mengelupas", "Rambut rontok", "Sakit gigi"]],
-      ["Jika mata perih akibat asap, tindakan medis awal?", ["Mengucek kuat", "Membilas air bersih & jauhi asap", "Berjemur", "Memakai obat sembarangan"]],
-      ["Rumah lebih aman JIKA...", ["Semua jendela dibuka", "Banyak tanaman plastik", "Celah tertutup rapat", "AC mode Exhaust"]],
-      ["Sumber asap tambahan dalam rumah yang pantang dilakukan?", ["Merokok di dalam", "Merebus air putih", "Asap motor di jalan", "Pabrik jauh"]],
-      ["Jika lansia nyeri dada saat kabut asap?", ["Minum es", "Hubungi medis", "Tidur di luar", "Pakai jaket"]],
-      ["Tujuan menjaga ruang dalam bersih asap?", ["Mencegah tagihan listrik", "Hiasan tidak berdebu", "Melindungi paru-paru dari PM2.5", "Mencegah pencuri"]],
-      ["Teman mengajak main bola saat asap tebal. Sikapmu?", ["Tolak baik-baik & ajak main di rumah", "Ikut sebentar", "Pakai masker tipis sambil lari", "Pindah lapangan"]],
-      ["Mengapa bayi & lansia rentan?", ["Sistem imun super", "Cepat komplikasi akibat partikel", "Kapasitas paru besar", "Tidak butuh oksigen"]],
-      ["Aksi fisik Detective Rumah yang benar?", ["Buka pintu belakang", "Bakar daun", "Siram atap", "Sumbat celah dengan kain basah"]],
-      ["Keputusan beraktivitas didasarkan pada...", ["Feeling", "Grup warga", "Aplikasi ISPU", "Medsos"]],
-      ["Jika lemas dan batuk cium asap?", ["Olahraga paksa", "Istirahat total di ruang tertutup bersih", "Makan pedas", "Mandi malam"]],
-      ["Satu poin utama Mission Rumah Sehat?", ["Nalar kritis di masa darurat", "Promosi RS", "Jual masker", "Lomba lari"]]
-    ];
-
-    let h = '<form id="quizForm" class="space-y-6">';
-    qData.forEach((q, i) => {
-      h += `<div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <span class="text-[10px] font-bold tracking-wider text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md mb-2 inline-block">SOAL ${i+1}/15</span>
-              <p class="font-bold text-slate-800 mb-3 text-[15px]">${q[0]}</p>
-              <div class="space-y-2 text-sm">`;
-      q[1].forEach((a, j) => {
-        h += `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-emerald-50 has-[:checked]:bg-emerald-50 has-[:checked]:border-emerald-500">
-                <input type="radio" name="q${i}" value="${j}" required class="mt-0.5 text-emerald-600">
-                <span class="text-slate-700 leading-tight">${a}</span>
-              </label>`;
-      });
-      h += `</div></div>`;
-    });
-    h += `<div class="sticky bottom-0 bg-white pt-4 pb-2 border-t border-slate-100">
-            <button class="w-full bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl" type="submit" id="btnSubmitQuiz">🏆 KIRIM KUIS</button>
-          </div></form><div id="quizResult" class="mt-4"></div>`;
-          
-    showModal("07 — FINAL QUIZ", "15 Pertanyaan Penentu", h);
-    
-    document.getElementById("quizForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById("btnSubmitQuiz");
-      btn.disabled = true; btn.textContent = "Menghitung...";
-      
-      const fd = new FormData(e.target);
-      let score = 0;
-      for (let i = 0; i < 15; i++) { if (Number(fd.get("q" + i)) === QUIZ_ANSWERS[i]) score++; }
-      
-      const persen = Math.round((score / 15) * 100);
-      const isLulus = persen >= 70;
-      const stat = isLulus ? 'Lulus' : 'Belum Tuntas';
-      
-      try {
-        let updateData = { quizScore: persen, quizStatus: stat, lastUpdate: new Date().getTime() };
-        if (isLulus) { updateData.m7 = true; updateData.status = "Selesai"; }
-        await updateDoc(doc(db, "progress", currentStudent.id), updateData);
-        
-        document.getElementById("quizForm").style.display = "none";
-        document.getElementById("quizResult").innerHTML = `
-          <div class="p-6 rounded-2xl text-center ${isLulus ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-amber-100 text-amber-900 border border-amber-200'}">
-            <div class="text-5xl mb-4">${isLulus ? '🎉' : '💪'}</div>
-            <h3 class="text-xl font-extrabold mb-1">${isLulus ? 'LULUS MEMUASKAN!' : 'TETAP SEMANGAT!'}</h3>
-            <p class="text-sm mb-4">Persentase Benar: <strong>${persen}%</strong> (Minimal 70%)</p>
-          </div>`;
-      } catch(err) {
-        document.getElementById("quizResult").innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-xl">${err.message}</div>`;
-        btn.disabled = false; btn.textContent = "Coba Lagi";
-      }
-    });
-  }
-
-  document.getElementById("btnAction").addEventListener("click", () => {
-    showModal("🏠 FINAL MISSION", "Aksi Nyata", `
-      <form id="actionForm" class="space-y-4 text-sm">
         <div>
-          <label class="block font-bold mb-1">Aksi yang dilakukan?</label>
-          <select id="actionType" required class="w-full p-3 bg-slate-50 border rounded-xl outline-none">
-            <option value="">-- Pilih --</option>
-            <option>Sumbat celah dengan kain basah</option>
-            <option>Pel basah (bukan disapu)</option>
-            <option>Ingatkan keluarga jangan merokok di dalam</option>
-            <option>Lainnya</option>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">1. Pilih Kelas</label>
+          <select id="classSelect" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="">-- Memuat daftar kelas... --</option>
           </select>
         </div>
-        <div>
-          <label class="block font-bold mb-1">Upload Foto</label>
-          <input id="actionPhoto" type="file" accept="image/*" required class="w-full p-2 border rounded-xl text-sm">
-        </div>
-        <div>
-          <label class="block font-bold mb-1">Refleksi</label>
-          <textarea id="actionRef" required class="w-full p-3 bg-slate-50 border rounded-xl min-h-[60px]" placeholder="Mengapa aksi ini efektif?"></textarea>
-        </div>
-        <button class="w-full mt-4 bg-amber-500 text-white font-bold py-3.5 px-4 rounded-xl" type="submit" id="btnSubmitAction">📤 KIRIM LAPORAN</button>
-      </form>
-    `);
-    
-    document.getElementById("actionForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById("btnSubmitAction");
-      const file = document.getElementById("actionPhoto").files[0];
-      if (!file) return;
 
-      btn.disabled = true; btn.textContent = "Mengkompres dan Mengunggah...";
-      
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">2. Pilih Nama Kamu</label>
+          <select id="nameSelect" disabled class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50">
+            <option value="">-- Pilih kelas terlebih dahulu --</option>
+          </select>
+        </div>
+
+        <button id="btnStart" disabled class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200">
+          🚀 Masuk & Mulai Misi
+        </button>
+
+        <div class="pt-4 border-t border-slate-100 text-center">
+          <button onclick="openTeacherLoginModal()" class="text-xs font-semibold text-slate-500 hover:text-emerald-700 transition-colors">
+            👨‍🏫 Akses Dashboard Guru
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== DASHBOARD SISWA ==================== -->
+  <div id="studentApp" class="hidden min-h-screen pb-16">
+    <header class="bg-white/80 backdrop-blur border-b border-slate-200 sticky top-0 z-30 px-4 py-3">
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🌿</span>
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 leading-tight">Rumah Sehat</h2>
+            <p class="text-xs text-emerald-600 font-medium">Misi Mandiri Siswa</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div id="userNameDisplay" class="text-xs font-bold text-slate-900">-</div>
+            <div id="userClassDisplay" class="text-[11px] text-slate-500">-</div>
+          </div>
+          <button onclick="confirmLogout()" title="Keluar" class="p-2 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
+      <!-- HERO BANNER -->
+      <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-6 md:p-8 text-white shadow-lg">
+        <span class="inline-block bg-white/20 text-emerald-100 text-xs font-bold px-3 py-1 rounded-full mb-3">DIMENSI PROFIL LULUSAN: KESEHATAN</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold mb-2">Saat Asap Datang, Kita Siap.</h2>
+        <p class="text-sm text-emerald-100/90 leading-relaxed max-w-2xl">
+          Selesaikan seluruh modul edukasi untuk memahami bahaya partikel asap, lindungi saluran pernapasanmu, dan buktikan aksimu secara nyata di rumah!
+        </p>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Progress Penuntasan</span>
+          <span id="progressText" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0 / 7 Misi</span>
+        </div>
+        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full bg-emerald-500 transition-all duration-500 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- GRID MISI -->
+      <div>
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <span>🗺️</span> Peta Pembelajaran & Misi
+        </h3>
+        <div id="missionsList" class="grid sm:grid-cols-2 gap-4">
+          <!-- Dibuat dinamis oleh JS -->
+        </div>
+      </div>
+
+      <!-- FINAL MISSION CARD -->
+      <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-6 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest bg-black/20 px-2.5 py-1 rounded-md">Misi Nyata</span>
+          <h4 class="text-xl font-bold mt-2">Tugas Aksi Rumah Sehat</h4>
+          <p class="text-sm text-amber-100 mt-1">Lakukan 1 tindakan nyata menjaga sirkulasi/kebersihan rumah dan unggah buktinya.</p>
+        </div>
+        <button onclick="openAction()" class="bg-white hover:bg-amber-50 text-amber-900 font-bold px-5 py-3 rounded-xl shadow-lg transition shrink-0">
+          📸 Kerjakan Aksi
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== DASHBOARD GURU ==================== -->
+  <div id="teacherApp" class="hidden min-h-screen pb-16">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3">
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📊</span>
+          <h2 class="text-sm font-bold text-slate-900">Dashboard Monitoring Guru</h2>
+        </div>
+        <button onclick="location.reload()" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">Keluar</button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
+      <!-- STATS -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Total Siswa</small><div id="statTotal" class="text-2xl font-black text-slate-900 mt-1">0</div></div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Belum Mulai</small><div id="statBelum" class="text-2xl font-black text-rose-600 mt-1">0</div></div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Berproses</small><div id="statProses" class="text-2xl font-black text-amber-600 mt-1">0</div></div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200"><small class="text-slate-500 font-bold text-xs uppercase">Selesai</small><div id="statSelesai" class="text-2xl font-black text-emerald-600 mt-1">0</div></div>
+      </div>
+
+      <!-- FILTER & TABEL -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-200 flex flex-wrap gap-3 items-center justify-between">
+          <h3 class="font-bold text-slate-900">Pantauan Kelas Real-Time</h3>
+          <select id="teacherClassFilter" onchange="renderTeacherTable()" class="text-sm border border-slate-200 rounded-xl px-3 py-1.5 focus:outline-none">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase">
+              <tr>
+                <th class="p-3">NIS</th>
+                <th class="p-3">Nama</th>
+                <th class="p-3">Kelas</th>
+                <th class="p-3 text-center">M1</th>
+                <th class="p-3 text-center">M2</th>
+                <th class="p-3 text-center">M3</th>
+                <th class="p-3 text-center">M4</th>
+                <th class="p-3 text-center">M5</th>
+                <th class="p-3 text-center">M6</th>
+                <th class="p-3 text-center">M7</th>
+                <th class="p-3 text-center">Kuis</th>
+                <th class="p-3 text-center">Aksi</th>
+                <th class="p-3">Status</th>
+              </tr>
+            </thead>
+            <tbody id="teacherTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL GLOBAL (POPUP) ==================== -->
+  <div id="modalBackdrop" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto my-auto">
+      <button onclick="closeModal()" class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 text-lg font-bold">×</button>
+      <div id="modalHeader" class="mb-4">
+        <h3 id="modalTitle" class="text-xl font-bold text-slate-900">Judul Modal</h3>
+        <p id="modalSub" class="text-xs text-slate-500 font-medium"></p>
+      </div>
+      <div id="modalContent" class="text-sm text-slate-700 space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- FIREBASE MODULAR SCRIPTS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHUBrmU090Uqs-JeRf44f0KnOut2clGnE",
+      authDomain: "rumah-sehat-2257b.firebaseapp.com",
+      projectId: "rumah-sehat-2257b",
+      storageBucket: "rumah-sehat-2257b.firebasestorage.app",
+      messagingSenderId: "1079637949718",
+      appId: "1:1079637949718:web:8cb3c2dc878fb6fcada437",
+      measurementId: "G-NDDBQL6VPR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const defaultRoster = [
+      {nis:'1001',nama:'AMIRA',kelas:'XA'},{nis:'1002',nama:'ARI SULTAN',kelas:'XA'},
+      {nis:'1003',nama:'DIPA',kelas:'XA'},{nis:'1004',nama:'FITRI',kelas:'XA'},
+      {nis:'1005',nama:'GESTI PUJI HASTUTI',kelas:'XA'},{nis:'1006',nama:'JONIA GITA',kelas:'XA'},
+      {nis:'1007',nama:'KHAIRUNNISA',kelas:'XA'},{nis:'1008',nama:'KIRANA AZ ZAHRA S.',kelas:'XA'},
+      {nis:'1009',nama:'LAILATUL KAMARIYAH',kelas:'XA'},{nis:'1010',nama:'M. AQSAN',kelas:'XA'},
+      {nis:'1011',nama:'M. REZKY',kelas:'XA'},{nis:'1012',nama:'PARIS HAMDICKY',kelas:'XA'},
+      {nis:'1013',nama:'RIRIN',kelas:'XA'},{nis:'1014',nama:'SARIPAH',kelas:'XA'},
+      {nis:'1015',nama:'SERIF',kelas:'XA'},{nis:'1016',nama:'YAHUDA SETIAWAN',kelas:'XA'},
+      {nis:'1017',nama:'YOGA PEBRIAN',kelas:'XA'},
+      {nis:'1018',nama:'AHMAD REIHAN HAFIDZ',kelas:'XB'},{nis:'1019',nama:'AHMAD SAPUTRA',kelas:'XB'},
+      {nis:'1020',nama:'ASEP FAISAL RAMADHAN',kelas:'XB'},{nis:'1021',nama:'BATUR',kelas:'XB'},
+      {nis:'1022',nama:'GLEN HARNANDO',kelas:'XB'},{nis:'1023',nama:'LIA',kelas:'XB'},
+      {nis:'1024',nama:'MARSA',kelas:'XB'},{nis:'1025',nama:'MIKHA',kelas:'XB'},
+      {nis:'1026',nama:'MIKHA DWI FRANSISKA',kelas:'XB'},{nis:'1027',nama:'MUHAMAD NAZRI',kelas:'XB'},
+      {nis:'1028',nama:'NURMA',kelas:'XB'},{nis:'1029',nama:'REPA FITRIA',kelas:'XB'},
+      {nis:'1030',nama:'SAFFA',kelas:'XB'},{nis:'1031',nama:'SERIFAH',kelas:'XB'},
+      {nis:'1032',nama:'SITI SOLEHAH',kelas:'XB'},{nis:'1033',nama:'YUAN ANSON PRATAMA',kelas:'XB'},
+      {nis:'1034',nama:'ZAKIA',kelas:'XB'},{nis:'1112',nama:'NABILA',kelas:'XB'},
+      {nis:'1035',nama:'Amelia Zahra',kelas:'XI ATPH'},{nis:'1036',nama:'Aulia Rahmah',kelas:'XI ATPH'},
+      {nis:'1037',nama:'Bulan',kelas:'XI ATPH'},{nis:'1038',nama:'Duna',kelas:'XI ATPH'},
+      {nis:'1039',nama:'Eko',kelas:'XI ATPH'},{nis:'1040',nama:'Fandi',kelas:'XI ATPH'},
+      {nis:'1041',nama:'Luna Maya',kelas:'XI ATPH'},{nis:'1042',nama:'Mulkan',kelas:'XI ATPH'},
+      {nis:'1043',nama:'Pitae',kelas:'XI ATPH'},{nis:'1044',nama:'Raditiya Meizi',kelas:'XI ATPH'},
+      {nis:'1045',nama:'Raudah',kelas:'XI ATPH'},{nis:'1046',nama:'Ryansyah',kelas:'XI ATPH'},
+      {nis:'1047',nama:'Salatiah',kelas:'XI ATPH'},{nis:'1048',nama:'Santia',kelas:'XI ATPH'},
+      {nis:'1049',nama:'Tinos',kelas:'XI ATPH'},{nis:'1050',nama:'Yosua Christiando',kelas:'XI ATPH'},
+      {nis:'1051',nama:'AHMAD JAILANI',kelas:'XI ATP'},{nis:'1052',nama:'AHMAD YUHANI',kelas:'XI ATP'},
+      {nis:'1053',nama:'Akhmad mahdiani',kelas:'XI ATP'},{nis:'1054',nama:'Arindhia',kelas:'XI ATP'},
+      {nis:'1055',nama:'Atak',kelas:'XI ATP'},{nis:'1056',nama:'Jahdi',kelas:'XI ATP'},
+      {nis:'1057',nama:'M. arfani',kelas:'XI ATP'},{nis:'1058',nama:'M.SAMUJI',kelas:'XI ATP'},
+      {nis:'1059',nama:'Muhammad Alvino',kelas:'XI ATP'},{nis:'1060',nama:'Muhammad Rafli',kelas:'XI ATP'},
+      {nis:'1061',nama:"NORAI'INTAN",kelas:'XI ATP'},{nis:'1062',nama:'Nur inaya',kelas:'XI ATP'},
+      {nis:'1063',nama:'Nurtiya',kelas:'XI ATP'},{nis:'1064',nama:'Reno Wijaya',kelas:'XI ATP'},
+      {nis:'1065',nama:'Risky saputra',kelas:'XI ATP'},{nis:'1066',nama:'SAMUEL',kelas:'XI ATP'}
+    ];
+
+    let currentStudent = null;
+    let studentsData = [];
+    let progressData = {};
+    let unsubscribeProgress = null;
+    let teacherLiveRows = [];
+
+    const missionMeta = [
+      { id: 1, title: "01 — Apa Yang Terjadi?", desc: "Mengenal kabut asap karhutla dan bahayanya bagi udara sekitar." },
+      { id: 2, title: "02 — Kenali Partikel Asap", desc: "Memahami bahaya mikropartikel PM2.5 dan Indeks Standar Pencemar Udara (ISPU)." },
+      { id: 3, title: "03 — Apa Dampaknya ke Tubuh?", desc: "Mendeteksi respons saluran pernapasan, mata, dan tanda bahaya tubuh." },
+      { id: 4, title: "04 — Lindungi Diri & Keluarga", desc: "Strategi mitigasi mandiri, masker yang tepat, dan ruang aman." },
+      { id: 5, title: "05 — Rumah Sehat Detective", desc: "Observasi ventilasi, celah asap, dan tata kelola ruang dalam rumah." },
+      { id: 6, title: "06 — Keputusan Cepat & Tepat", desc: "Simulasi skenario darurat dan penentuan aksi cepat yang selamat." },
+      { id: 7, title: "07 — Final Quiz (15 Soal)", desc: "Uji pemahaman komprehensif seluruh materi kesiapsiagaan asap." }
+    ];
+
+    const quizQuestions = [
+      { q: "Apa komponen paling berbahaya dari asap kebakaran hutan dan lahan yang dapat masuk ke paru-paru terdalam?", opt: ["Partikel halus PM2.5", "Uap air murni", "Gas Oksigen", "Debu pasir kasar"], ans: 0 },
+      { q: "Mengapa masker kain biasa kurang efektif menyaring asap pekat kebakaran hutan?", opt: ["Pori-porinya terlalu besar untuk menahan partikel mikroskopis PM2.5", "Warnanya terlalu tipis", "Membuat wajah terasa hangat", "Menyerap udara dingin"], ans: 0 },
+      { q: "Ketika status ISPU menunjukkan kategori 'Sangat Tidak Sehat', tindakan terbaik adalah...", opt: ["Mengurangi aktivitas luar dan menutup celah ventilasi berlebih", "Berolahraga lari maraton", "Membuka semua jendela lebar-lebar", "Membakar sampah di pekarangan"], ans: 0 },
+      { q: "Kelompok rentan yang wajib mendapatkan proteksi ekstra dari kabut asap adalah...", opt: ["Balita, lansia, dan penderita asma", "Remaja bertubuh tinggi", "Orang dewasa pekerja kantoran", "Hewan piaraan berbulu tebal"], ans: 0 },
+      { q: "Apa dampak langsung paparan asap terhadap mata?", opt: ["Iritasi, mata perih, berair, dan merah", "Penglihatan menjadi tajam seketika", "Mata menjadi kebal kotoran", "Warna bola mata berubah"], ans: 0 },
+      { q: "Tindakan 'Shelter in Place' saat darurat kabut asap berarti...", opt: ["Berlindung di dalam rumah/ruangan yang aman dari infiltrasi asap", "Mengungsi ke dalam hutan", "Bersepeda santai bersama", "Tidur di teras depan rumah"], ans: 0 },
+      { q: "Aktivitas rumah tangga apa yang TIDAK BOLEH dilakukan saat udara luar berasap tebal?", opt: ["Merokok di dalam rumah atau membakar sampah", "Menyapu lantai secara perlahan", "Minum air putih", "Membaca buku di kamar"], ans: 0 },
+      { q: "Mengapa kita dianjurkan minum lebih banyak air putih ketika terjadi kabut asap?", opt: ["Membantu mengencerkan dahak dan menjaga kelembapan mukosa pernapasan", "Menghilangkan rasa lapar", "Mengganti fungsi masker", "Membuat tubuh kebal asap"], ans: 0 },
+      { q: "Kapan seseorang yang terpapar asap harus segera dibawa ke fasilitas kesehatan?", opt: ["Bila sesak napas berat, bibir kebiruan, atau lemas", "Bila merasa ingin minum es", "Bila mengantuk di malam hari", "Bila baju terkena debu"], ans: 0 },
+      { q: "Masker standar yang paling direkomendasikan untuk filtrasi partikel asap mikroskopis adalah...", opt: ["Masker respirator tipe N95 / KN95 / KF94", "Masker kain 1 lapis", "Sapu tangan basah", "Masker scuba tipis"], ans: 0 },
+      { q: "Cara sederhana mencegah asap menyusup melalui celah bawah pintu rumah adalah...", opt: ["Menyumbat celah dengan kain/handuk basah", "Menaburkan pasir kering", "Membuka pintu sedikit", "Menyalakan kipas angin menghadap keluar"], ans: 0 },
+      { q: "Apa kepanjangan dari ISPU?", opt: ["Indeks Standar Pencemar Udara", "Instruksi Sanitasi Polusi Udara", "Indikator Sehat Penjaga Udara", "Informasi Saluran Pernapasan Utama"], ans: 0 },
+      { q: "Bagaimana cara menjaga kebersihan lantai rumah dari abu karhutla tanpa menerbangkan partikelnya?", opt: ["Mengepel basah atau menyapu dengan kain lembap", "Menyapu kencang dengan sapu lidi", "Meniup debu dengan kipas angin", "Membiarkan debu mengering sendiri"], ans: 0 },
+      { q: "Jika teman mengajak bermain sepak bola di lapangan saat kabut asap pekat, sikap terbaik adalah...", opt: ["Menolak dengan santun dan menyarankan aktivitas edukatif di dalam ruangan", "Mengikuti ajakan agar tidak dikira penakut", "Ikut bermain tanpa masker", "Menonton di pinggir lapangan"], ans: 0 },
+      { q: "Tujuan utama pembelajaran projek kokurikuler 'Mission: Rumah Sehat' ini adalah...", opt: ["Membangun kemandirian mengambil keputusan aman demi menjaga kesehatan", "Menghindari piket sekolah", "Menguji daya tahan tubuh menghirup polusi", "Membuat rumah menjadi gelap gulita"], ans: 0 }
+    ];
+
+    // ==================== INISIALISASI DATABASE ====================
+    async function initApp() {
       try {
-        // Kompresi Canvas Client-side
+        const snap = await getDocs(collection(db, "students"));
+        if (snap.empty) {
+          document.getElementById("loadingText").textContent = "Sinkronisasi data awal siswa...";
+          for (const s of defaultRoster) {
+            await setDoc(doc(db, "students", s.nis), { ...s, aktif: "YA" });
+          }
+          const refreshSnap = await getDocs(collection(db, "students"));
+          studentsData = refreshSnap.docs.map(d => d.data());
+        } else {
+          studentsData = snap.docs.map(d => d.data());
+        }
+
+        populateClassSelect();
+        hideLoading();
+      } catch (err) {
+        console.error(err);
+        showLoadingError(err.message);
+      }
+    }
+
+    function showLoadingError(msg) {
+      document.getElementById("loading").innerHTML = `
+        <div class="text-center p-6 max-w-sm">
+          <div class="text-4xl mb-3">⚠️</div>
+          <h3 class="font-bold text-red-600 text-lg">Gagal Terhubung ke Database</h3>
+          <p class="text-xs text-slate-600 mt-2">${msg}</p>
+          <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl">Coba Lagi</button>
+        </div>
+      `;
+    }
+
+    function populateClassSelect() {
+      const classSelect = document.getElementById("classSelect");
+      const classes = [...new Set(studentsData.map(s => s.kelas))].sort();
+      classSelect.innerHTML = `<option value="">-- Pilih Kelas --</option>` + 
+        classes.map(c => `<option value="${c}">${c}</option>`).join('');
+
+      classSelect.onchange = (e) => {
+        const selectedClass = e.target.value;
+        const nameSelect = document.getElementById("nameSelect");
+        const btnStart = document.getElementById("btnStart");
+        btnStart.disabled = true;
+
+        if (!selectedClass) {
+          nameSelect.disabled = true;
+          nameSelect.innerHTML = `<option value="">-- Pilih kelas terlebih dahulu --</option>`;
+          return;
+        }
+
+        const filtered = studentsData.filter(s => s.kelas === selectedClass).sort((a,b) => a.nama.localeCompare(b.nama));
+        nameSelect.disabled = false;
+        nameSelect.innerHTML = `<option value="">-- Pilih Nama Kamu --</option>` + 
+          filtered.map(s => `<option value="${s.nis}">${s.nama}</option>`).join('');
+      };
+
+      document.getElementById("nameSelect").onchange = (e) => {
+        document.getElementById("btnStart").disabled = !e.target.value;
+      };
+
+      document.getElementById("btnStart").onclick = () => {
+        const nis = document.getElementById("nameSelect").value;
+        const student = studentsData.find(s => s.nis === nis);
+        if (student) startStudentSession(student);
+      };
+    }
+
+    async function startStudentSession(student) {
+      currentStudent = student;
+      document.getElementById("userNameDisplay").textContent = student.nama;
+      document.getElementById("userClassDisplay").textContent = "Kelas " + student.kelas;
+
+      document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("studentApp").classList.remove("hidden");
+
+      renderMissions();
+      listenProgress(student.nis);
+    }
+
+    function renderMissions() {
+      const list = document.getElementById("missionsList");
+      list.innerHTML = missionMeta.map(m => `
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-xs">
+                ${m.id < 10 ? '0' + m.id : m.id}
+              </span>
+              <span id="statusBadge-${m.id}" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+                ○ Belum Selesai
+              </span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">${m.title}</h4>
+            <p class="text-xs text-slate-500 mt-1 leading-relaxed">${m.desc}</p>
+          </div>
+          <button onclick="openMission(${m.id})" class="mt-4 w-full py-2.5 px-3 bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-bold text-xs rounded-xl transition">
+            Buka Materi & Misi
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function listenProgress(nis) {
+      if (unsubscribeProgress) unsubscribeProgress();
+      const ref = doc(db, "progress", nis);
+      unsubscribeProgress = onSnapshot(ref, (docSnap) => {
+        if (docSnap.exists()) {
+          progressData = docSnap.data();
+        } else {
+          progressData = {
+            misi1:false, misi2:false, misi3:false, misi4:false,
+            misi5:false, misi6:false, misi7:false,
+            nama: currentStudent.nama, kelas: currentStudent.kelas, nis: currentStudent.nis
+          };
+          setDoc(ref, progressData);
+        }
+        updateProgressUI();
+      });
+    }
+
+    function updateProgressUI() {
+      let count = 0;
+      for (let i = 1; i <= 7; i++) {
+        const done = progressData['misi' + i] === true;
+        if (done) count++;
+        const badge = document.getElementById(`statusBadge-${i}`);
+        if (badge) {
+          badge.textContent = done ? "✓ Selesai" : "○ Belum Selesai";
+          badge.className = done 
+            ? "text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800" 
+            : "text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700";
+        }
+      }
+
+      document.getElementById("progressText").textContent = `${count} / 7 Misi`;
+      document.getElementById("progressBar").style.width = `${Math.round((count / 7) * 100)}%`;
+    }
+
+    window.markMissionComplete = async function(missionNumber) {
+      if (!currentStudent) return;
+      try {
+        const ref = doc(db, "progress", currentStudent.nis);
+        await updateDoc(ref, {
+          [`misi${missionNumber}`]: true,
+          lastUpdated: new Date().toISOString()
+        });
+        showToast(`🎉 Misi ${missionNumber} Berhasil Diselesaikan!`);
+        closeModal();
+      } catch (err) {
+        showToast("Gagal menyimpan progress: " + err.message);
+      }
+    };
+
+    window.openMission = function(n) {
+      if (n === 1) {
+        setModal(
+          "01 — Apa Yang Terjadi?",
+          "Memahami Fenomena Kabut Asap Karhutla",
+          `
+            <div class="space-y-4">
+              <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+                <h4 class="font-bold text-emerald-900 text-sm">🌫️ Mengapa Udara Menjadi Berkabut & Berbau?</h4>
+                <p class="text-xs text-emerald-800 mt-1 leading-relaxed">
+                  Ketika terjadi kebakaran hutan dan lahan (karhutla), vegetasi organik seperti gambut, ranting, dan dedaunan terbakar dalam proses pembakaran tidak sempurna. Ini menghasilkan asap tebal yang mengandung gas beracun (CO, CO2, SO2, NOx) serta miliaran partikel padat mikroskopis yang menyebar mengikuti hembusan angin hingga bermil-mil ke permukiman kita.
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                <h4 class="font-bold text-slate-800 text-sm">💡 Apa yang Terjadi pada Lingkungan?</h4>
+                <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside mt-2">
+                  <li><strong>Jarak Pandang Menyusut:</strong> Menghalangi cahaya matahari dan membahayakan mobilitas di jalan raya.</li>
+                  <li><strong>Kualitas Udara Menurun:</strong> Kadar oksigen bersih menipis, digantikan partikel pencemar.</li>
+                  <li><strong>Infiltrasi Rumah:</strong> Tanpa perlindungan, partikel halus ini dengan mudah menyusup melalui lubang ventilasi rumah kita.</li>
+                </ul>
+              </div>
+
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-1">Saat udara di luar berbau sangit dan berkabut asap tebal, tindakan apa yang sebaiknya dihindari?</p>
+                <div class="space-y-2 mt-3">
+                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Membuka jendela kamar agar udara luar masuk bebas</button>
+                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Menutup ventilasi berlebih dan beraktivitas di dalam rumah</button>
+                </div>
+                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+              </div>
+
+              <button onclick="markMissionComplete(1)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                ✓ Saya Paham & Selesaikan Misi 01
+              </button>
+            </div>
+          `
+        );
+      } else if (n === 2) {
+        setModal(
+          "02 — Kenali Partikel Asap",
+          "Ancaman Halus Tak Kasat Mata: PM2.5 & ISPU",
+          `
+            <div class="space-y-4">
+              <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200">
+                <h4 class="font-bold text-blue-900 text-sm">🔬 Apa itu PM2.5?</h4>
+                <p class="text-xs text-blue-800 mt-1 leading-relaxed">
+                  Particulate Matter 2.5 (PM2.5) adalah partikel debu, jelaga, dan cairan dengan diameter lebih kecil dari 2.5 mikrometer—atau kira-kira 30 kali lebih kecil dari sehelai rambut manusia! Karena ukurannya sangat mikro, bulu hidung kita tidak sanggup menyaringnya, sehingga partikel ini dapat masuk langsung ke alveolus paru-paru dan menembus peredaran darah.
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                <h4 class="font-bold text-slate-800 text-sm">📊 Mengenal Kategori ISPU</h4>
+                <div class="grid grid-cols-2 gap-2 mt-2 text-[11px]">
+                  <div class="p-2 bg-green-100 text-green-900 rounded-lg"><strong>0 - 50 (Baik):</strong> Udara sangat sehat.</div>
+                  <div class="p-2 bg-blue-100 text-blue-900 rounded-lg"><strong>51 - 100 (Sedang):</strong> Masih dapat ditoleransi.</div>
+                  <div class="p-2 bg-yellow-100 text-yellow-900 rounded-lg"><strong>101 - 200 (Tidak Sehat):</strong> Bersifat merugikan manusia & tanaman.</div>
+                  <div class="p-2 bg-red-100 text-red-900 rounded-lg"><strong>201 - 300 (Sangat Tidak Sehat):</strong> Tingkatkan proteksi ketat!</div>
+                </div>
+              </div>
+
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-1">Mengapa masker kain biasa tidak cukup melindungi saat kabut asap pekat?</p>
+                <div class="space-y-2 mt-3">
+                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Karena pori-pori kain jauh lebih besar daripada ukuran mikropartikel PM2.5</button>
+                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Karena masker kain tidak memiliki warna menarik</button>
+                </div>
+                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+              </div>
+
+              <button onclick="markMissionComplete(2)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                ✓ Saya Paham & Selesaikan Misi 02
+              </button>
+            </div>
+          `
+        );
+      } else if (n === 3) {
+        setModal(
+          "03 — Apa Dampaknya ke Tubuh?",
+          "Mengenali Sinyal Alarm Tubuh Terhadap Racun Asap",
+          `
+            <div class="space-y-4">
+              <div class="p-4 bg-rose-50 rounded-2xl border border-rose-200">
+                <h4 class="font-bold text-rose-900 text-sm">🫁 Reaksi Sistem Pernapasan & Organ Tubuh</h4>
+                <p class="text-xs text-rose-800 mt-1 leading-relaxed">
+                  Ketika tubuh terpapar zat iritan karhutla, sistem pertahanan tubuh akan bereaksi dengan memicu radang. Jika tidak diantisipasi, gejala ringan bisa berkembang menjadi Infeksi Saluran Pernapasan Akut (ISPA).
+                </p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <strong class="text-slate-800">Gejala Umum Ringan:</strong>
+                  <p class="text-slate-600 mt-1">Mata pedih berair, hidung tersumbat, bersin, tenggorokan gatal dan batuk kering.</p>
+                </div>
+                <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                  <strong class="text-rose-800">Tanda Bahaya Darurat:</strong>
+                  <p class="text-rose-600 mt-1">Sesak napas hebat, bunyi mengi pada dada, dada terasa tertekan, atau lemas ekstrem.</p>
+                </div>
+              </div>
+
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-1">Langkah pertama yang paling bijak jika mata terasa perih akibat kabut asap adalah...</p>
+                <div class="space-y-2 mt-3">
+                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Membilas dengan air bersih/tetes mata steril dan masuk ke ruang tertutup</button>
+                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Mengucek mata sekuat tenaga dengan tangan kotor</button>
+                </div>
+                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+              </div>
+
+              <button onclick="markMissionComplete(3)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                ✓ Saya Paham & Selesaikan Misi 03
+              </button>
+            </div>
+          `
+        );
+      } else if (n === 4) {
+        setModal(
+          "04 — Lindungi Diri & Keluarga",
+          "Protokol Perlindungan Diri & Masker yang Tepat",
+          `
+            <div class="space-y-4">
+              <div class="p-4 bg-teal-50 rounded-2xl border border-teal-200">
+                <h4 class="font-bold text-teal-900 text-sm">🛡️ Protokol 5 Langkah Kesiapsiagaan</h4>
+                <ol class="text-xs text-teal-800 space-y-1.5 list-decimal list-inside mt-2 leading-relaxed">
+                  <li><strong>Gunakan Masker Standar:</strong> Gunakan respirator N95, KN95, atau KF94 yang pas (fit) di wajah saat terpaksa ke luar.</li>
+                  <li><strong>Hindari Polusi Dalam Ruangan:</strong> Jangan merokok, menyalakan obat nyamuk bakar, atau membakar sampah di sekitar rumah.</li>
+                  <li><strong>Jaga Hidrasi:</strong> Perbanyak minum air putih hangat untuk membersihkan lendir pada saluran napas.</li>
+                  <li><strong>Jaga Pola Makan:</strong> Konsumsi buah dan sayur kaya antioksidan untuk meningkatkan daya tahan tubuh.</li>
+                  <li><strong>Lindungi Kelompok Rentan:</strong> Pastikan balita dan lansia tetap berada di area paling bersih di rumah.</li>
+                </ol>
+              </div>
+
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-1">Jika terpaksa harus keluar rumah untuk keperluan mendesak, masker apa yang paling disarankan?</p>
+                <div class="space-y-2 mt-3">
+                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Masker N95 / KN95 / KF94 dengan kerapatan tinggi</button>
+                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Masker scuba tipis yang longgar</button>
+                </div>
+                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+              </div>
+
+              <button onclick="markMissionComplete(4)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                ✓ Saya Paham & Selesaikan Misi 04
+              </button>
+            </div>
+          `
+        );
+      } else if (n === 5) {
+        setModal(
+          "05 — Rumah Sehat Detective",
+          "Audit Mandiri Kondisi Fisik Rumah Tinggal",
+          `
+            <div class="space-y-4">
+              <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-200">
+                <h4 class="font-bold text-indigo-900 text-sm">🕵️ Jadilah Detektif Kebersihan Udara di Rumah!</h4>
+                <p class="text-xs text-indigo-800 mt-1 leading-relaxed">
+                  Rumah adalah benteng pertahanan utama kita. Lakukan inspeksi ke setiap sudut rumah untuk memastikan ruangan aman dari asap luar (Shelter in Place).
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs space-y-2">
+                <h5 class="font-bold text-slate-800">5 Titik Pemeriksaan Wajib:</h5>
+                <p>1. <strong>Celah Bawah Pintu:</strong> Apakah ada celah besar tempat asap menyusup masuk?</p>
+                <p>2. <strong>Kaca & Jendela:</strong> Apakah sudah terkunci rapat saat kualitas udara memburuk?</p>
+                <p>3. <strong>Kebersihan Lantai:</strong> Bersihkan debu jelaga dengan kain pel lembap, bukan disapu kering.</p>
+                <p>4. <strong>Ketersediaan Air Minum:</strong> Apakah wadah air bersih tertutup rapat?</p>
+                <p>5. <strong>Ruang Bersih (Clean Room):</strong> Tentukan satu kamar dengan ventilasi paling minim untuk tempat istirahat keluarga.</p>
+              </div>
+
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <span class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Tantangan Cepat</span>
+                <p class="text-xs font-bold text-amber-900 mt-1">Mengapa membersihkan debu abu karhutla di lantai lebih baik dipel daripada disapu biasa?</p>
+                <div class="space-y-2 mt-3">
+                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">A. Agar partikel abu terikat air dan tidak melayang kembali terhirup hidung</button>
+                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">B. Agar lantai menjadi licin untuk bermain seluncuran</button>
+                </div>
+                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+              </div>
+
+              <button onclick="markMissionComplete(5)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                ✓ Saya Paham & Selesaikan Misi 05
+              </button>
+            </div>
+          `
+        );
+      } else if (n === 6) {
+        setModal(
+          "06 — Keputusan Cepat & Tepat",
+          "Simulasi Pengambilan Keputusan Nyata",
+          `
+            <div class="space-y-4">
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <h4 class="font-bold text-amber-900 text-sm">⚡ Uji Respon Tanggap Darurat</h4>
+                <p class="text-xs text-amber-800 mt-1 leading-relaxed">
+                  Dalam kondisi kritis, kecepatan dan ketepatan keputusan menentukan keselamatan kesehatan diri dan orang di sekitar kita.
+                </p>
+              </div>
+
+              <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                <div class="text-xs font-bold text-slate-800">Skenario: Temanmu mengajak berolahraga di luar karena bosan di rumah, sementara langit tampak kuning kecokelatan dan berbau menyengat.</div>
+                <div class="space-y-2">
+                  <button onclick="checkAnswer(this, true)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
+                    <strong>Pilihan Aman:</strong> Menolak ajakan secara ramah, menjelaskan bahaya racun asap, dan mengajak aktivitas lain di dalam rumah.
+                  </button>
+                  <button onclick="checkAnswer(this, false)" class="w-full text-left p-3 text-xs bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
+                    <strong>Pilihan Bahaya:</strong> Tetap ikut bermain karena menganggap fisik masih muda dan sehat.
+                  </button>
+                </div>
+                <div class="resultFeedback mt-2 hidden p-2.5 rounded-lg text-xs font-bold"></div>
+              </div>
+
+              <button onclick="markMissionComplete(6)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                ✓ Saya Paham & Selesaikan Misi 06
+              </button>
+            </div>
+          `
+        );
+      } else if (n === 7) {
+        renderQuizModal();
+      }
+    };
+
+    window.checkAnswer = function(btn, isCorrect) {
+      const parent = btn.closest(".space-y-2").parentElement;
+      const feedback = parent.querySelector(".resultFeedback");
+      feedback.classList.remove("hidden");
+      if (isCorrect) {
+        feedback.className = "resultFeedback mt-2 p-2.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+        feedback.textContent = "✓ Tepat sekali! Analisis keputusanmu sangat benar.";
+      } else {
+        feedback.className = "resultFeedback mt-2 p-2.5 rounded-lg text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
+        feedback.textContent = "✗ Kurang tepat. Pikirkan kembali opsi yang meminimalkan bahaya bagi tubuh.";
+      }
+    };
+
+    function renderQuizModal() {
+      let qHtml = `<form id="quizForm" class="space-y-6">`;
+      quizQuestions.forEach((item, idx) => {
+        qHtml += `
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Soal ${idx + 1} dari 15</span>
+            <p class="text-xs font-bold text-slate-900">${item.q}</p>
+            <div class="space-y-1.5 pt-1">
+              ${item.opt.map((optText, oIdx) => `
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer hover:bg-slate-50">
+                  <input type="radio" name="q_${idx}" value="${oIdx}" required class="text-emerald-600 focus:ring-emerald-500">
+                  <span>${optText}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+      qHtml += `
+        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+          Kirim & Simpan Jawaban Kuis
+        </button>
+      </form>
+      <div id="quizResultArea" class="mt-4 hidden"></div>`;
+
+      setModal("07 — Final Quiz", "Uji Pemahaman Komprehensif (15 Soal)", qHtml);
+
+      document.getElementById("quizForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        let score = 0;
+        quizQuestions.forEach((item, idx) => {
+          const selected = Number(fd.get(`q_${idx}`));
+          if (selected === item.ans) score++;
+        });
+
+        const percent = Math.round((score / 15) * 100);
+        const pass = percent >= 70;
+        const resultArea = document.getElementById("quizResultArea");
+        resultArea.classList.remove("hidden");
+
+        resultArea.innerHTML = `
+          <div class="p-4 rounded-2xl border ${pass ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'}">
+            <h4 class="font-bold text-sm">${pass ? '🎉 Selamat, Kamu Lulus!' : '💪 Tetap Semangat, Ulangi Lagi!'}</h4>
+            <p class="text-xs mt-1">Skor Kamu: <strong>${score} / 15 (${percent}%)</strong></p>
+            <p class="text-xs mt-0.5 font-medium">${pass ? 'Pemahamanmu tentang kesiapsiagaan kabut asap sangat luar biasa!' : 'Syarat lulus kuis adalah minimal nilai 70%. Silakan pelajari kembali materi sebelumnya.'}</p>
+          </div>
+        `;
+
+        if (pass && currentStudent) {
+          try {
+            await updateDoc(doc(db, "progress", currentStudent.nis), {
+              misi7: true,
+              quizScore: score,
+              quizPercent: percent,
+              quizStatus: "LULUS",
+              lastUpdated: new Date().toISOString()
+            });
+            showToast("✓ Skor Kuis Berhasil Dicatat di Database!");
+          } catch (err) {
+            showToast("Error simpan kuis: " + err.message);
+          }
+        }
+      };
+    }
+
+    // ==================== TUGAS AKSI NYATA ====================
+    window.openAction = function() {
+      setModal(
+        "Tugas Aksi Nyata Rumah Sehat",
+        "Dokumentasi & Refleksi Tindakan Nyata di Rumah",
+        `
+          <form id="actionForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">1. Jenis Tindakan yang Dilakukan</label>
+              <select id="actType" required class="w-full text-xs border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                <option value="">-- Pilih Jenis Aksi --</option>
+                <option value="Menyumbat Celah Pintu/Ventilasi">Menyumbat celah pintu/jendela dengan kain lembap</option>
+                <option value="Mengepel Basah Abu Jelaga">Mengepel lantai secara basah untuk mengikat debu</option>
+                <option value="Menyiapkan Ruang Bersih Keluarga">Menata satu kamar sebagai 'Clean Room' tertutup</option>
+                <option value="Menyiapkan Air Minum & Obat Pribadi">Memastikan stok air putih higienis dan tertutup</option>
+                <option value="Edukasi Anggota Keluarga">Mengingatkan orang tua/adik memakai masker saat keluar</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">2. Ceritakan Apa yang Kamu Lakukan</label>
+              <textarea id="actDesc" required rows="3" placeholder="Ceritakan bagaimana kamu melakukan tindakan di atas..." class="w-full text-xs border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">3. Foto Bukti Tindakan (Maks. 3 MB)</label>
+              <input type="file" id="actPhoto" accept="image/*" required class="w-full text-xs border border-slate-200 rounded-xl p-2.5 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+              <small class="text-[11px] text-slate-500 block mt-1">Foto kegiatan atau barang bukti tindakan. Tidak wajib memperlihatkan wajah.</small>
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <label class="block text-xs font-bold text-slate-900 border-b border-slate-100 pb-1 uppercase">Pertanyaan Refleksi Siswa</label>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Refleksi 1: Mengapa tindakan yang kamu pilih itu penting bagi kesehatan?</label>
+                <textarea id="ref1" required rows="2" class="w-full text-xs border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Refleksi 2: Apa kendala yang kamu temui dan bagaimana solusinya?</label>
+                <textarea id="ref2" required rows="2" class="w-full text-xs border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Refleksi 3: Kebiasaan sehat apa yang akan terus kamu jaga setelah ini?</label>
+                <textarea id="ref3" required rows="2" class="w-full text-xs border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+              </div>
+            </div>
+
+            <button type="submit" id="btnSubmitAction" class="w-full py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              📤 Kirim Bukti Aksi Nyata
+            </button>
+          </form>
+        `
+      );
+
+      document.getElementById("actionForm").onsubmit = async (e) => {
+        e.preventDefault();
+        if (!currentStudent) return;
+
+        const file = document.getElementById("actPhoto").files[0];
+        if (!file) return;
+
+        const btn = document.getElementById("btnSubmitAction");
+        btn.disabled = true;
+        btn.textContent = "Mengompres & Mengunggah Data...";
+
+        try {
+          const base64Img = await compressImageToBase64(file);
+          const ref = doc(db, "progress", currentStudent.nis);
+          await updateDoc(ref, {
+            aksiSelesai: true,
+            jenisAksi: document.getElementById("actType").value,
+            deskripsiAksi: document.getElementById("actDesc").value,
+            fotoBukti: base64Img,
+            refleksi1: document.getElementById("ref1").value,
+            refleksi2: document.getElementById("ref2").value,
+            refleksi3: document.getElementById("ref3").value,
+            lastActionDate: new Date().toISOString()
+          });
+
+          showToast("🎉 Hebat! Bukti aksi nyata berhasil terkirim.");
+          closeModal();
+        } catch (err) {
+          alert("Gagal mengunggah aksi: " + err.message);
+          btn.disabled = false;
+          btn.textContent = "Kirim Bukti Aksi Nyata";
+        }
+      };
+    };
+
+    function compressImageToBase64(file) {
+      return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
           const img = new Image();
-          img.onload = async function() {
+          img.src = event.target.result;
+          img.onload = () => {
             const canvas = document.createElement('canvas');
             const MAX_WIDTH = 500;
-            const scaleSize = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH;
-            canvas.height = img.height * scaleSize;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            const base64Photo = canvas.toDataURL("image/jpeg", 0.5); // kompresi 50%
-            
-            await updateDoc(doc(db, "progress", currentStudent.id), {
-              m5: true, // Auto selesai misi 5
-              aksiType: document.getElementById("actionType").value,
-              aksiRefleksi: document.getElementById("actionRef").value,
-              aksiPhoto: base64Photo,
-              lastUpdate: new Date().getTime()
-            });
-            
-            closeModal();
-            showToast("🎉 Laporan berhasil dikirim!");
-          }
-          img.src = event.target.result;
-        }
-        reader.readAsDataURL(file);
-      } catch(err) {
-        showToast(err.message, 'err');
-        btn.disabled = false; btn.textContent = "Coba Kirim Ulang";
-      }
-    });
-  });
+            let width = img.width;
+            let height = img.height;
 
-  document.getElementById("btnAdmin").addEventListener("click", () => {
-    showModal("Kunci Guru", "Akses Khusus", `
-      <div class="space-y-4">
-        <input type="password" id="passGuru" class="w-full p-3 border rounded-xl outline-none" placeholder="Masukkan PIN Guru">
-        <div id="errGuru" class="text-red-500 text-sm hidden">PIN Salah!</div>
-        <button class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl" id="btnLoginGuru">MASUK</button>
-      </div>
-    `);
-    
-    document.getElementById("btnLoginGuru").addEventListener("click", () => {
-      if(document.getElementById("passGuru").value === "guruhebat") { 
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.5));
+          };
+          img.onerror = (e) => reject(e);
+        };
+        reader.onerror = (e) => reject(e);
+      });
+    }
+
+    // ==================== DASHBOARD GURU ====================
+    window.openTeacherLoginModal = function() {
+      setModal(
+        "Akses Khusus Guru",
+        "Masukkan PIN Keamanan untuk Membuka Dashboard",
+        `
+          <div class="space-y-4">
+            <input type="password" id="teacherPassInput" placeholder="Masukkan password guru..." class="w-full text-sm border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+            <p class="text-[11px] text-slate-500">*Gunakan password resmi pengajar.</p>
+            <button onclick="verifyTeacherLogin()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              Verifikasi & Masuk
+            </button>
+          </div>
+        `
+      );
+    };
+
+    window.verifyTeacherLogin = function() {
+      const pass = document.getElementById("teacherPassInput").value.trim();
+      if (pass === "guruhebat") {
         closeModal();
-        document.getElementById("loginPage").style.display = "none";
-        document.getElementById("teacherApp").style.display = "block";
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("teacherApp").classList.remove("hidden");
         initTeacherRealtime();
       } else {
-        document.getElementById("errGuru").classList.remove("hidden");
+        alert("Password guru salah! Pastikan huruf kecil semua.");
       }
-    });
-  });
+    };
 
-  document.getElementById("btnExit").addEventListener("click", () => {
-    showModal("🚪 Konfirmasi Keluar", "Ganti Akun Siswa", `
-      <p class="text-sm mb-5 text-slate-600">Apakah kamu yakin ingin keluar? Progres misi kamu sudah otomatis tersimpan dengan aman.</p>
-      <div class="flex gap-3">
-        <button class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors" onclick="document.getElementById('closeModalBtn').click()">Batal</button>
-        <button class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-red-200" id="confirmExitBtn">Ya, Keluar</button>
-      </div>
-    `);
-    
-    setTimeout(() => {
-      const exitBtn = document.getElementById("confirmExitBtn");
-      if(exitBtn) exitBtn.addEventListener("click", () => location.reload());
-    }, 50);
-  });
+    function initTeacherRealtime() {
+      const classes = [...new Set(studentsData.map(s => s.kelas))].sort();
+      const filter = document.getElementById("teacherClassFilter");
+      filter.innerHTML = `<option value="">Semua Kelas</option>` + 
+        classes.map(c => `<option value="${c}">${c}</option>`).join('');
 
-  function initTeacherRealtime() {
-    const classFilt = document.getElementById("classFilter");
-    classFilt.innerHTML = '<option value="">Semua Kelas</option>';
-    Object.keys(classData).sort().forEach(k => {
-      classFilt.innerHTML += `<option value="${k}">${k}</option>`;
-    });
+      onSnapshot(collection(db, "progress"), (snapshot) => {
+        const progMap = {};
+        snapshot.forEach(doc => progMap[doc.id] = doc.data());
 
-    unsubscribeTeacher = onSnapshot(collection(db, "progress"), (snapshot) => {
-      const pData = [];
-      snapshot.forEach(doc => { pData.push(doc.data()); });
-      renderTeacherTable(pData);
-    });
-    
-    classFilt.addEventListener("change", () => {
-      // Trigger snapshot manual rerender via local var workaround
-      getDocs(collection(db, "progress")).then(snap => {
-        const pData = []; snap.forEach(doc => { pData.push(doc.data()); });
-        renderTeacherTable(pData);
+        teacherLiveRows = studentsData.map(s => {
+          const p = progMap[s.nis] || {};
+          let doneCount = 0;
+          for (let i = 1; i <= 7; i++) if (p[`misi${i}`]) doneCount++;
+
+          let status = "BELUM MULAI";
+          if (doneCount === 7 && p.aksiSelesai) status = "SELESAI";
+          else if (doneCount > 0 || p.aksiSelesai) status = "BERPROSES";
+
+          return {
+            nis: s.nis,
+            nama: s.nama,
+            kelas: s.kelas,
+            m1: !!p.misi1, m2: !!p.misi2, m3: !!p.misi3, m4: !!p.misi4,
+            m5: !!p.misi5, m6: !!p.misi6, m7: !!p.misi7,
+            quizScore: p.quizScore !== undefined ? p.quizScore : '-',
+            quizPercent: p.quizPercent !== undefined ? p.quizPercent + '%' : '-',
+            aksi: !!p.aksiSelesai,
+            fotoBukti: p.fotoBukti || null,
+            status
+          };
+        });
+
+        renderTeacherStats();
+        renderTeacherTable();
       });
-    });
-  }
+    }
 
-  function renderTeacherTable(pData) {
-    const filt = document.getElementById("classFilter").value;
-    const body = document.getElementById("teacherBody");
-    body.innerHTML = '';
-    
-    let stats = { total: 0, belum: 0, proses: 0, selesai: 0 };
-    
-    // Gabung data siswa statis dg progres dinamis
-    let allStudents = [];
-    Object.values(classData).forEach(arr => { allStudents = allStudents.concat(arr); });
-    
-    allStudents.forEach(s => {
-      if (filt && s.kelas !== filt) return;
-      stats.total++;
-      
-      const p = pData.find(x => x.nama === s.nama && x.kelas === s.kelas) || {};
-      const statColor = p.status === 'Selesai' ? 'text-emerald-600' : (p.status === 'Berproses' ? 'text-amber-500' : 'text-slate-400');
-      
-      if(p.status === 'Selesai') stats.selesai++;
-      else if(p.status === 'Berproses') stats.proses++;
-      else stats.belum++;
+    function renderTeacherStats() {
+      document.getElementById("statTotal").textContent = teacherLiveRows.length;
+      document.getElementById("statBelum").textContent = teacherLiveRows.filter(r => r.status === "BELUM MULAI").length;
+      document.getElementById("statProses").textContent = teacherLiveRows.filter(r => r.status === "BERPROSES").length;
+      document.getElementById("statSelesai").textContent = teacherLiveRows.filter(r => r.status === "SELESAI").length;
+    }
 
-      body.innerHTML += `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="px-4 py-3 font-bold text-slate-800">${s.nama}</td>
-          <td class="px-4 py-3"><span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded font-bold">${s.kelas}</span></td>
-          ${[1,2,3,4,5,6].map(n => `<td class="px-2 py-3 text-center ${p["m"+n] ? "text-emerald-500 font-bold" : "text-slate-300"}">${p["m"+n] ? "✓" : "○"}</td>`).join("")}
-          <td class="px-4 py-3 text-center font-bold ${p.quizScore >= 70 ? 'text-emerald-600' : (p.quizScore ? 'text-red-500' : 'text-slate-300')}">${p.quizScore ? p.quizScore+"%" : "-"}</td>
-          <td class="px-4 py-3 text-center">
-            ${p.aksiPhoto ? `<button onclick="window.open('${p.aksiPhoto}', '_blank')" class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded font-bold hover:bg-emerald-200">LIHAT</button>` : '<span class="text-slate-300">○</span>'}
+    window.renderTeacherTable = function() {
+      const filterVal = document.getElementById("teacherClassFilter").value;
+      const filtered = filterVal ? teacherLiveRows.filter(r => r.kelas === filterVal) : teacherLiveRows;
+
+      const tbody = document.getElementById("teacherTableBody");
+      tbody.innerHTML = filtered.map(r => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 font-mono font-medium">${r.nis}</td>
+          <td class="p-3 font-semibold text-slate-900">${r.nama}</td>
+          <td class="p-3">${r.kelas}</td>
+          <td class="p-3 text-center">${r.m1 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center">${r.m2 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center">${r.m3 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center">${r.m4 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center">${r.m5 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center">${r.m6 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center">${r.m7 ? '<span class="text-emerald-600 font-bold">✓</span>' : '<span class="text-slate-300">○</span>'}</td>
+          <td class="p-3 text-center font-bold">${r.quizPercent}</td>
+          <td class="p-3 text-center">
+            ${r.aksi ? `<button onclick="viewActionProof('${r.nis}')" class="text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded font-bold">Lihat</button>` : '<span class="text-slate-300">-</span>'}
           </td>
-          <td class="px-4 py-3 text-xs font-bold ${statColor}">${p.status || 'Belum Mulai'}</td>
-        </tr>`;
-    });
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              r.status === 'SELESAI' ? 'bg-emerald-100 text-emerald-800' :
+              r.status === 'BERPROSES' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'
+            }">${r.status}</span>
+          </td>
+        </tr>
+      `).join('');
+    };
 
-    document.getElementById("stats").innerHTML = `
-      <div class="bg-white p-4 rounded-xl border shadow-sm"><div class="text-[10px] font-bold text-slate-500 uppercase">Total</div><div class="text-3xl font-black">${stats.total}</div></div>
-      <div class="bg-white p-4 rounded-xl border shadow-sm"><div class="text-[10px] font-bold text-red-500 uppercase">Belum</div><div class="text-3xl font-black text-red-600">${stats.belum}</div></div>
-      <div class="bg-white p-4 rounded-xl border shadow-sm"><div class="text-[10px] font-bold text-amber-500 uppercase">Proses</div><div class="text-3xl font-black text-amber-500">${stats.proses}</div></div>
-      <div class="bg-white p-4 rounded-xl border shadow-sm"><div class="text-[10px] font-bold text-emerald-500 uppercase">Selesai</div><div class="text-3xl font-black text-emerald-600">${stats.selesai}</div></div>
-    `;
-  }
+    window.viewActionProof = function(nis) {
+      const row = teacherLiveRows.find(r => r.nis === nis);
+      if (!row || !row.fotoBukti) return;
+      setModal(
+        `Bukti Aksi: ${row.nama} (${row.kelas})`,
+        `NIS: ${row.nis}`,
+        `
+          <div class="space-y-3 text-center">
+            <img src="${row.fotoBukti}" alt="Foto Bukti" class="rounded-2xl max-h-80 mx-auto shadow border border-slate-200">
+            <p class="text-xs text-slate-500">Bukti foto telah terkompresi otomatis saat pengiriman siswa.</p>
+          </div>
+        `
+      );
+    };
 
-  function hideLoading() {
-    const el = document.getElementById('loadingScreen');
-    el.style.opacity = '0';
-    setTimeout(() => { el.style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; }, 500);
-  }
+    // ==================== UTILITAS UI ====================
+    window.confirmLogout = function() {
+      setModal(
+        "Konfirmasi Keluar",
+        "Apakah kamu ingin berganti akun?",
+        `
+          <div class="space-y-4 text-center">
+            <p class="text-xs text-slate-600">Semua progress yang telah kamu selesaikan sudah tersimpan aman di database.</p>
+            <div class="flex gap-2">
+              <button onclick="closeModal()" class="flex-1 py-2.5 bg-slate-100 font-bold text-xs rounded-xl">Batal</button>
+              <button onclick="location.reload()" class="flex-1 py-2.5 bg-rose-600 text-white font-bold text-xs rounded-xl shadow">Ya, Keluar</button>
+            </div>
+          </div>
+        `
+      );
+    };
 
-  function showModal(title, sub, content) {
-    document.getElementById("modalTitle").textContent = title;
-    document.getElementById("modalSub").textContent = sub;
-    document.getElementById("modalContent").innerHTML = content;
-    document.getElementById("modal").classList.remove("hidden");
-    document.getElementById("modal").classList.add("flex");
-  }
+    function setModal(title, sub, contentHtml) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalSub").textContent = sub;
+      document.getElementById("modalContent").innerHTML = contentHtml;
+      const b = document.getElementById("modalBackdrop");
+      b.classList.remove("hidden");
+      b.classList.add("flex");
+    }
 
-  function closeModal() {
-    document.getElementById("modal").classList.add("hidden");
-    document.getElementById("modal").classList.remove("flex");
-  }
-  
-  document.getElementById("closeModalBtn").addEventListener("click", closeModal);
-  document.getElementById("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+    window.closeModal = function() {
+      const b = document.getElementById("modalBackdrop");
+      b.classList.add("hidden");
+      b.classList.remove("flex");
+    };
 
-  window.showToast = function(msg, type='info') {
-    const el = document.getElementById("toast");
-    el.textContent = msg;
-    el.className = `fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[200] px-6 py-3 rounded-xl shadow-2xl font-bold text-sm transition-all duration-300 translate-y-0 opacity-100 ${type==='err' ? 'bg-red-600 text-white' : 'bg-slate-800 text-emerald-400'}`;
-    setTimeout(() => { el.classList.remove('translate-y-0', 'opacity-100'); el.classList.add('translate-y-20', 'opacity-0'); }, 3000);
-  }
-</script>
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 3500);
+    }
+
+    function hideLoading() {
+      document.getElementById("loading").classList.add("hidden");
+    }
+
+    // Jalankan inisialisasi awal
+    initApp();
+  </script>
 </body>
 </html>
